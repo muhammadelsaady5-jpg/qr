@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام حماية وتواصل المركبات - QR</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #f0f2f5; margin: 0; padding: 16px; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #1c1e21; }
+    .card { background: #fff; width: 100%; max-width: 420px; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+    .badge { display: inline-block; background: #e7f3ff; color: #1877f2; padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 12px; }
+    h2 { margin: 8px 0 16px; font-size: 22px; color: #111; }
+    p { color: #555; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+    input { width: 100%; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; transition: 0.2s; }
+    input:focus { border-color: #1877f2; }
+    .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-decoration: none; margin-bottom: 10px; transition: 0.2s; }
+    .btn-primary { background: #1877f2; color: #fff; }
+    .btn-primary:hover { background: #166fe5; }
+    .btn-call { background: #0d6efd; color: #fff; }
+    .btn-wa { background: #25D366; color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #ccc; color: #555; font-size: 13px; padding: 10px; margin-top: 12px; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #1877f2; border-radius: 50%; width: 36px; height: 36px; animation: spin 1s linear infinite; margin: 20px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .hidden { display: none; }
+    .info-box { background: #f8f9fa; padding: 16px; border-radius: 12px; margin-bottom: 18px; border: 1px solid #eee; }
+    .owner-name { font-size: 20px; font-weight: bold; color: #111; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div id="codeBadge" class="badge">كود: ---</div>
+
+  <!-- شاشة التحميل -->
+  <div id="loadingView">
+    <div class="loader"></div>
+    <p>جاري التحقق من بيانات الاستيكر...</p>
+  </div>
+
+  <!-- شاشة عدم وجود كود في الرابط -->
+  <div id="noIdView" class="hidden">
+    <h2>مرحباً بك!</h2>
+    <p>يرجى مسح كود الـ QR المطبوع على الاستيكر مباشرة للوصول لبيانات المركبة أو تفعيل الكود.</p>
+  </div>
+
+  <!-- شاشة تسجيل وتفعيل الاستيكر الجديد -->
+  <div id="registerView" class="hidden">
+    <h2 id="regTitle">تفعيل الاستيكر لأول مرة</h2>
+    <p>هذا الكود غير مُفعّل حالياً. أدخل بياناتك لتفعيل الاستيكر وربطه بهاتفك فوراً:</p>
+    <form id="regForm">
+      <input type="text" id="ownerName" placeholder="اسم المالك (أو اللقب)" required>
+      <input type="tel" id="ownerPhone" placeholder="رقم الهاتف / الواتساب (مثال: 010xxxxxxxx)" required>
+      <input type="password" id="ownerPin" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات مستقبلاً" required>
+      <button type="submit" class="btn btn-primary" id="submitBtn">حفظ وتفعيل الاستيكر</button>
+    </form>
+  </div>
+
+  <!-- شاشة عرض بيانات المالك عند المسح -->
+  <div id="ownerView" class="hidden">
+    <h2>بيانات مالك المركبة</h2>
+    <p>في حال وجود المركبة في مكان غير مناسب أو لأي طارئ، يمكنك التواصل مع المالك مباشرة:</p>
+    <div class="info-box">
+      <div class="owner-name" id="displayOwner">---</div>
+      <div style="color:#666; font-size:14px;" id="displayPhone">---</div>
+    </div>
+    <a id="callBtn" href="#" class="btn btn-call">📞 اتصال هاتفي مباشر</a>
+    <a id="waBtn" href="#" target="_blank" class="btn btn-wa">💬 مراسلة عبر واتساب</a>
+    <button onclick="openEditPrompt()" class="btn btn-outline">⚙️ تعديل البيانات (للمالك فقط)</button>
+  </div>
+</div>
+
+<script>
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
+  const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
+
+  const params = new URLSearchParams(window.location.search);
+  const stickerId = (params.get('id') || '').trim();
+  let currentRecord = null;
+
+  function showView(viewId) {
+    ['loadingView', 'noIdView', 'registerView', 'ownerView'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(viewId).classList.remove('hidden');
+  }
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], cell = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], next = text[i+1];
+      if (c === '"' && inQuotes && next === '"') { cell += '"'; i++; }
+      else if (c === '"') { inQuotes = !inQuotes; }
+      else if (c === ',' && !inQuotes) { row.push(cell.trim()); cell = ''; }
+      else if ((c === '\n' || (c === '\r' && next === '\n')) && !inQuotes) {
+        if (c === '\r') i++;
+        row.push(cell.trim());
+        rows.push(row);
+        row = []; cell = '';
+      } else { cell += c; }
+    }
+    if (cell || row.length) { row.push(cell.trim()); rows.push(row); }
+    return rows;
+  }
+
+  async function init() {
+    if (!stickerId) {
+      showView('noIdView');
+      return;
+    }
+    document.getElementById('codeBadge').textContent = "كود الاستيكر: " + stickerId;
+
+    try {
+      const res = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
+      const csvText = await res.text();
+      const rows = parseCSV(csvText);
+
+      // البحث من الأسفل للأعلى لأخذ أحدث تسجيل/تعديل لنفس الكود
+      for (let i = rows.length - 1; i >= 1; i--) {
+        if (rows[i][1] && rows[i][1].toLowerCase() === stickerId.toLowerCase()) {
+          currentRecord = {
+            id: rows[i][1],
+            name: rows[i][2] || 'مالك المركبة',
+            phone: rows[i][3] || '',
+            pin: rows[i][4] || ''
+          };
+          break;
+        }
+      }
+
+      if (currentRecord && currentRecord.phone) {
+        renderOwnerView(currentRecord);
+      } else {
+        showView('registerView');
+      }
+    } catch (err) {
+      alert("حدث خطأ في الاتصال بقاعدة البيانات، يرجى تحديث الصفحة.");
+    }
+  }
+
+  function renderOwnerView(data) {
+    document.getElementById('displayOwner').textContent = data.name;
+    document.getElementById('displayPhone').textContent = data.phone;
+
+    let cleanPhone = data.phone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+
+    document.getElementById('callBtn').href = "tel:" + data.phone;
+    const waMsg = encodeURIComponent("مرحباً، قمت بمسح كود الاستيكر رقم (" + data.id + ") الخاص بمركبتك.");
+    document.getElementById('waBtn').href = "https://wa.me/" + cleanPhone + "?text=" + waMsg;
+
+    showView('ownerView');
+  }
+
+  function openEditPrompt() {
+    const enteredPin = prompt("أدخل الرقم السري (PIN) الخاص بهذا الاستيكر لتعديل البيانات:");
+    if (enteredPin === null) return;
+    if (enteredPin.trim() === currentRecord.pin.trim()) {
+      document.getElementById('regTitle').textContent = "تعديل بيانات الاستيكر";
+      document.getElementById('ownerName').value = currentRecord.name;
+      document.getElementById('ownerPhone').value = currentRecord.phone;
+      document.getElementById('ownerPin').value = currentRecord.pin;
+      showView('registerView');
+    } else {
+      alert("الرقم السري غير صحيح!");
+    }
+  }
+
+  document.getElementById('regForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = "جاري الحفظ والتفعيل...";
+
+    const name = document.getElementById('ownerName').value.trim();
+    const phone = document.getElementById('ownerPhone').value.trim();
+    const pin = document.getElementById('ownerPin').value.trim();
+
+    const formData = new URLSearchParams();
+    formData.append('entry.566025065', stickerId);
+    formData.append('entry.675203836', name);
+    formData.append('entry.1411822485', phone);
+    formData.append('entry.787112400', pin);
+
+    try {
+      await fetch(FORM_ACTION_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      });
+
+      currentRecord = { id: stickerId, name, phone, pin };
+      alert("تم حفظ وتفعيل الاستيكر بنجاح!");
+      renderOwnerView(currentRecord);
+    } catch (err) {
+      alert("تعذر الإرسال، تأكد من اتصالك بالإنترنت وحاول مرة أخرى.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "حفظ وتفعيل الاستيكر";
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
