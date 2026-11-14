@@ -246,7 +246,6 @@
       border-radius: 50px;
     }
 
-    /* شريط الدخول السريع المحمي برقم الاستيكر والـ PIN */
     .quick-lookup-bar {
       display: flex;
       align-items: center;
@@ -780,6 +779,9 @@
 </head>
 <body>
 
+  <!-- مشغل موسيقى خواطر الخلفي -->
+  <audio id="bg-music-player" src="music.mp3" loop preload="auto"></audio>
+
   <div class="container">
     <div class="main-card" id="main-card">
       
@@ -788,7 +790,7 @@
 
       <!-- أزرار الصوت واللغة -->
       <div class="top-controls-left">
-        <button type="button" class="top-pill-btn music-btn" id="music-toggle-btn" onclick="toggleAmbientMusic()" title="تشغيل / إيقاف الموسيقى">🔇</button>
+        <button type="button" class="top-pill-btn music-btn" id="music-toggle-btn" onclick="toggleAmbientMusic()" title="تشغيل / إيقاف موسيقى خواطر">🔇</button>
         <button type="button" class="top-pill-btn" id="lang-btn" onclick="toggleLanguage()">English 🌐</button>
       </div>
 
@@ -1034,9 +1036,7 @@
       const targetRecord = recordsMap.get(rawCode.toLowerCase());
       const mySavedId = (localStorage.getItem('qr_tago_my_personal_id') || '').trim().toLowerCase();
 
-      // 1. إذا كان الكود مسجلاً مسبقاً لشخص ما
       if (targetRecord && targetRecord.phone) {
-        // إذا كان هو نفسه الكود المحفوظ على هذا الجهاز مسبقاً -> يفتح مباشرة
         if (mySavedId === rawCode.toLowerCase()) {
           stickerId = targetRecord.id;
           currentRecord = targetRecord;
@@ -1046,7 +1046,6 @@
           return;
         }
 
-        // إذا كان كوداً مختلفاً -> نطلب الرقم السري (PIN) الخاص بصاحب الكود للتحقق
         const enteredPin = prompt(
           currentLang === 'ar'
             ? `🔒 الكود رقم (${rawCode}) مسجل ومحمى.\nأدخل الرقم السري (PIN) الخاص بك للدخول:`
@@ -1072,7 +1071,6 @@
         return;
       }
 
-      // 2. إذا كان الكود جديداً غير مسجل بعد -> يفتح شاشة التفعيل لهذا الرقم
       stickerId = rawCode;
       currentRecord = null;
       document.getElementById('display-id').textContent = stickerId;
@@ -1084,67 +1082,29 @@
       window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
     }
 
-    // محرك الموسيقى الخلفية الهادئة
-    let audioCtx = null;
+    // ==========================================
+    // مشغل موسيقى خواطر الخلفي (music.mp3)
+    // ==========================================
+    const bgAudio = document.getElementById('bg-music-player');
+    bgAudio.volume = 0.35; // مستوى صوت هادئ ومريح
     let isMusicPlaying = false;
-    let musicInterval = null;
     let userManuallyMuted = false;
-
-    const AMBIENT_CHORDS = [
-      [261.63, 329.63, 392.00, 493.88],
-      [220.00, 261.63, 329.63, 392.00],
-      [174.61, 220.00, 261.63, 349.23],
-      [196.00, 246.94, 293.66, 392.00]
-    ];
-    let chordIndex = 0;
-
-    function playWarmChord(freqs) {
-      if (!audioCtx || !isMusicPlaying) return;
-      const now = audioCtx.currentTime;
-      freqs.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
-
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.022, now + idx * 0.12 + 1.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 4.2);
-
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        osc.start(now + idx * 0.12);
-        osc.stop(now + idx * 0.12 + 4.4);
-      });
-    }
 
     function startAmbientMusic() {
       if (isMusicPlaying) return;
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
-      if (!audioCtx) audioCtx = new AudioContext();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      isMusicPlaying = true;
-      const btn = document.getElementById('music-toggle-btn');
-      btn.textContent = "🎵";
-      btn.classList.add('playing');
-
-      playWarmChord(AMBIENT_CHORDS[chordIndex]);
-      chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
-
-      musicInterval = setInterval(() => {
-        if (isMusicPlaying) {
-          playWarmChord(AMBIENT_CHORDS[chordIndex]);
-          chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
-        }
-      }, 4200);
+      bgAudio.play().then(() => {
+        isMusicPlaying = true;
+        const btn = document.getElementById('music-toggle-btn');
+        btn.textContent = "🎵";
+        btn.classList.add('playing');
+      }).catch(() => {
+        // المتصفح ينتظر تفاعل المستخدم أو لم يتم رفع ملف music.mp3 بعد
+      });
     }
 
     function stopAmbientMusic() {
+      bgAudio.pause();
       isMusicPlaying = false;
-      clearInterval(musicInterval);
       const btn = document.getElementById('music-toggle-btn');
       btn.textContent = "🔇";
       btn.classList.remove('playing');
@@ -1156,7 +1116,14 @@
         stopAmbientMusic();
       } else {
         userManuallyMuted = false;
-        startAmbientMusic();
+        bgAudio.play().then(() => {
+          isMusicPlaying = true;
+          const btn = document.getElementById('music-toggle-btn');
+          btn.textContent = "🎵";
+          btn.classList.add('playing');
+        }).catch(() => {
+          alert("تأكد من رفع ملف الصوت باسم music.mp3 داخل مستودع GitHub لتشغيل موسيقى خواطر.");
+        });
       }
     }
 
