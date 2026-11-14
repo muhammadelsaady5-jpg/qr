@@ -9,7 +9,6 @@
   <meta name="apple-mobile-web-app-title" content="QR-Tago">
   <title>QR-Tago | درع الحماية الذكي</title>
 
-  <!-- أيقونة التطبيق واللسان -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link id="pwa-manifest" rel="manifest" href="">
@@ -93,10 +92,23 @@
         inset 0 1px 0 rgba(248, 113, 113, 0.35);
     }
 
-    .lang-toggle-btn {
+    /* أزرار التحكم العلوية (اللغة + الصوت + التثبيت) */
+    .top-controls-left {
       position: absolute;
       top: 14px;
       left: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 5;
+    }
+
+    html[dir="ltr"] .top-controls-left {
+      left: auto;
+      right: 14px;
+    }
+
+    .top-pill-btn {
       background: rgba(212, 175, 55, 0.15);
       border: 1px solid rgba(212, 175, 55, 0.45);
       color: var(--gold-light);
@@ -105,12 +117,27 @@
       padding: 4px 10px;
       border-radius: 20px;
       cursor: pointer;
-      z-index: 5;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    html[dir="ltr"] .lang-toggle-btn {
-      left: auto;
-      right: 14px;
+    .top-pill-btn:hover {
+      background: rgba(212, 175, 55, 0.28);
+    }
+
+    .music-btn {
+      width: 30px;
+      height: 26px;
+      padding: 0;
+      font-size: 13px;
+    }
+
+    .music-btn.playing {
+      background: rgba(212, 175, 55, 0.32);
+      border-color: var(--gold-light);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
     }
 
     .install-top-btn {
@@ -583,7 +610,6 @@
       width: 100%;
     }
 
-    /* لوحة تحكم الإدارة (Admin Dashboard) */
     .admin-stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -696,13 +722,16 @@
   <div class="container">
     <div class="main-card" id="main-card">
       
-      <!-- زر تثبيت التطبيق (PWA) يظهر تلقائياً عند دعم المتصفح -->
+      <!-- زر تثبيت التطبيق (PWA) -->
       <button type="button" class="install-top-btn hidden" id="install-app-btn" onclick="installPWA()">📲 تثبيت التطبيق</button>
 
-      <!-- زر تبديل اللغة -->
-      <button type="button" class="lang-toggle-btn" id="lang-btn" onclick="toggleLanguage()">English 🌐</button>
+      <!-- أزرار الصوت واللغة -->
+      <div class="top-controls-left">
+        <button type="button" class="top-pill-btn music-btn" id="music-toggle-btn" onclick="toggleAmbientMusic()" title="تشغيل / إيقاف الموسيقى">🔇</button>
+        <button type="button" class="top-pill-btn" id="lang-btn" onclick="toggleLanguage()">English 🌐</button>
+      </div>
 
-      <!-- اللوجو (5 ضغطات متتالية تفتح لوحة تحكم الإدارة) -->
+      <!-- اللوجو -->
       <div class="logo-wrapper" onclick="handleLogoTap()" title="QR-Tago">
         <svg class="shield-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -872,7 +901,7 @@
         </button>
       </div>
 
-      <!-- لوحة تحكم الإدارة السرية (Admin Dashboard) -->
+      <!-- لوحة تحكم الإدارة السرية -->
       <div id="admin-view" class="hidden">
         <h2 class="section-title">👑 لوحة تحكم الإدارة</h2>
         <p class="section-desc">متابعة جميع الاستيكرات المفعلة وتنبيهات التجديد السنوي</p>
@@ -913,7 +942,6 @@
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
     const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
 
-    // إعدادات الإدارة (عدّل رقم الواتساب والرقم السري للوحة التحكم حسب رغبتك)
     const ADMIN_WHATSAPP = "201000000000";
     const ADMIN_PIN      = "2026";
 
@@ -923,7 +951,94 @@
     const ENTRY_PIN   = "entry.787112400";
     const ENTRY_NOTE  = "entry.1223610661";
 
-    // إعداد PWA Manifest لتثبيت الصفحة كتطبيق مستقل على الموبايل
+    // ==========================================
+    // محرك الموسيقى الخلفية الهادئة (Web Audio Ambient)
+    // ==========================================
+    let audioCtx = null;
+    let isMusicPlaying = false;
+    let musicInterval = null;
+    let userManuallyMuted = false;
+
+    const AMBIENT_CHORDS = [
+      [261.63, 329.63, 392.00, 493.88], // Cmaj7
+      [220.00, 261.63, 329.63, 392.00], // Am7
+      [174.61, 220.00, 261.63, 349.23], // Fmaj7
+      [196.00, 246.94, 293.66, 392.00]  // G6
+    ];
+    let chordIndex = 0;
+
+    function playWarmChord(freqs) {
+      if (!audioCtx || !isMusicPlaying) return;
+      const now = audioCtx.currentTime;
+      freqs.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.022, now + idx * 0.12 + 1.2);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 4.2);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now + idx * 0.12);
+        osc.stop(now + idx * 0.12 + 4.4);
+      });
+    }
+
+    function startAmbientMusic() {
+      if (isMusicPlaying) return;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      isMusicPlaying = true;
+      const btn = document.getElementById('music-toggle-btn');
+      btn.textContent = "🎵";
+      btn.classList.add('playing');
+
+      playWarmChord(AMBIENT_CHORDS[chordIndex]);
+      chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
+
+      musicInterval = setInterval(() => {
+        if (isMusicPlaying) {
+          playWarmChord(AMBIENT_CHORDS[chordIndex]);
+          chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
+        }
+      }, 4200);
+    }
+
+    function stopAmbientMusic() {
+      isMusicPlaying = false;
+      clearInterval(musicInterval);
+      const btn = document.getElementById('music-toggle-btn');
+      btn.textContent = "🔇";
+      btn.classList.remove('playing');
+    }
+
+    function toggleAmbientMusic() {
+      if (isMusicPlaying) {
+        userManuallyMuted = true;
+        stopAmbientMusic();
+      } else {
+        userManuallyMuted = false;
+        startAmbientMusic();
+      }
+    }
+
+    // تشغيل الموسيقى الهادئة تلقائياً عند أول لمسة من المستخدم (ما لم يقم بكتمها يدوياً)
+    function initAudioOnFirstTouch() {
+      if (!isMusicPlaying && !userManuallyMuted) {
+        startAmbientMusic();
+      }
+      document.removeEventListener('pointerdown', initAudioOnFirstTouch);
+    }
+    document.addEventListener('pointerdown', initAudioOnFirstTouch);
+
+    // إعداد PWA Manifest
     (function setupPWA() {
       const svgIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E";
       const manifestObj = {
@@ -969,7 +1084,6 @@
     let currentLang = 'ar';
     let lastRemainingDays = 365;
 
-    // فتح لوحة الإدارة بالضغط 5 مرات على اللوجو
     let logoTapCount = 0;
     let logoTapTimer = null;
     function handleLogoTap() {
@@ -1252,7 +1366,6 @@
         console.warn("Fallback numbering:", err);
       }
 
-      // تجميع أحدث سجل لكل كود لاستخدامه في لوحة الإدارة
       const mapById = new Map();
       for (let i = 1; i < rows.length; i++) {
         if (rows[i][1] && rows[i][2]) {
