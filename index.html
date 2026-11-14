@@ -246,7 +246,7 @@
       border-radius: 50px;
     }
 
-    /* شريط الدخول السريع برقم الاستيكر */
+    /* شريط الدخول السريع المحمي برقم الاستيكر والـ PIN */
     .quick-lookup-bar {
       display: flex;
       align-items: center;
@@ -830,10 +830,10 @@
         <div class="cat-badge hidden" id="category-badge">🛡️ عام</div>
       </div>
 
-      <!-- خانة الدخول السريع بكتابة كود الاستيكر -->
+      <!-- خانة الدخول السريع بكتابة كود الاستيكر (محمية بالرقم السري PIN) -->
       <form class="quick-lookup-bar" id="quick-lookup-form" onsubmit="goToStickerByInput(event)">
-        <input type="text" id="lookup-code-input" class="quick-lookup-input" data-i18n-ph="lookupPh" placeholder="لديك استيكر؟ اكتب الكود هنا (مثلاً 1001)">
-        <button type="submit" class="quick-lookup-btn" data-i18n="lookupBtn">دخول 🔍</button>
+        <input type="text" id="lookup-code-input" class="quick-lookup-input" data-i18n-ph="lookupPh" placeholder="أدخل كود استيكرك الشخصي للدخول...">
+        <button type="submit" class="quick-lookup-btn" data-i18n="lookupBtn">دخول 🔒</button>
       </form>
 
       <div id="loading-view">
@@ -1023,13 +1023,65 @@
     const ENTRY_PIN   = "entry.787112400";
     const ENTRY_NOTE  = "entry.1223610661";
 
-    // الانتقال الفوري لصفحة الاستيكر عند كتابة الكود في الخانة السريعة
+    let recordsMap = new Map();
+
+    // التحقق من ملكية الكود عند الدخول اليدوي ومنع فتح أكواد الآخرين
     function goToStickerByInput(e) {
       e.preventDefault();
       const rawCode = document.getElementById('lookup-code-input').value.trim();
       if (!rawCode) return;
-      const baseUrl = window.location.origin + window.location.pathname;
-      window.location.href = `${baseUrl}?id=${encodeURIComponent(rawCode)}`;
+
+      const targetRecord = recordsMap.get(rawCode.toLowerCase());
+      const mySavedId = (localStorage.getItem('qr_tago_my_personal_id') || '').trim().toLowerCase();
+
+      // 1. إذا كان الكود مسجلاً مسبقاً لشخص ما
+      if (targetRecord && targetRecord.phone) {
+        // إذا كان هو نفسه الكود المحفوظ على هذا الجهاز مسبقاً -> يفتح مباشرة
+        if (mySavedId === rawCode.toLowerCase()) {
+          stickerId = targetRecord.id;
+          currentRecord = targetRecord;
+          document.getElementById('display-id').textContent = stickerId;
+          window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
+          showOwnerView(currentRecord, false);
+          return;
+        }
+
+        // إذا كان كوداً مختلفاً -> نطلب الرقم السري (PIN) الخاص بصاحب الكود للتحقق
+        const enteredPin = prompt(
+          currentLang === 'ar'
+            ? `🔒 الكود رقم (${rawCode}) مسجل ومحمى.\nأدخل الرقم السري (PIN) الخاص بك للدخول:`
+            : `🔒 Sticker #${rawCode} is protected.\nEnter your secret PIN to access:`
+        );
+        if (enteredPin === null) return;
+
+        if (enteredPin.trim() === targetRecord.pin) {
+          stickerId = targetRecord.id;
+          currentRecord = targetRecord;
+          localStorage.setItem('qr_tago_my_personal_id', stickerId);
+          updatePWAManifest(stickerId);
+          document.getElementById('display-id').textContent = stickerId;
+          window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
+          showOwnerView(currentRecord, false);
+        } else {
+          alert(
+            currentLang === 'ar'
+              ? "⛔ عذراً، الرقم السري غير صحيح أو هذا الكود لا يخصك!"
+              : "⛔ Access Denied! Incorrect PIN or this sticker belongs to another user."
+          );
+        }
+        return;
+      }
+
+      // 2. إذا كان الكود جديداً غير مسجل بعد -> يفتح شاشة التفعيل لهذا الرقم
+      stickerId = rawCode;
+      currentRecord = null;
+      document.getElementById('display-id').textContent = stickerId;
+      document.getElementById('owner-view').classList.add('hidden');
+      document.getElementById('register-view').classList.remove('hidden');
+      document.getElementById('form-title').textContent = I18N[currentLang].formTitle;
+      document.getElementById('form-desc').textContent = I18N[currentLang].formDesc;
+      document.getElementById('activation-form').reset();
+      window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
     }
 
     // محرك الموسيقى الخلفية الهادئة
@@ -1281,8 +1333,8 @@
       ar: {
         brandSub: "درع الحماية الذكي",
         stickerLabel: "كود الاستيكر:",
-        lookupPh: "لديك استيكر؟ اكتب الكود هنا (مثلاً 1001)",
-        lookupBtn: "دخول 🔍",
+        lookupPh: "أدخل كود استيكرك الشخصي للدخول...",
+        lookupBtn: "دخول 🔒",
         loadingText: "جاري تجهيز كود الحماية...",
         formTitle: "تفعيل كود حماية جديد",
         formDesc: "تفعيل فوري لمدة 365 يوماً. أدخل بياناتك لربط الكود برقمك الآن.",
@@ -1313,8 +1365,8 @@
       en: {
         brandSub: "Smart Protection Shield",
         stickerLabel: "Sticker ID:",
-        lookupPh: "Have a sticker? Enter ID (e.g. 1001)",
-        lookupBtn: "Go 🔍",
+        lookupPh: "Enter your personal sticker ID...",
+        lookupBtn: "Login 🔒",
         loadingText: "Preparing protection shield...",
         formTitle: "Activate New Sticker",
         formDesc: "Instant 365-day activation. Enter your details to link this tag.",
@@ -1464,12 +1516,12 @@
         console.warn("Fallback numbering:", err);
       }
 
-      const mapById = new Map();
+      recordsMap = new Map();
       for (let i = 1; i < rows.length; i++) {
         if (rows[i][1] && rows[i][2]) {
           const idKey = rows[i][1].trim();
           const meta = decodeMetadata(rows[i][5] ? rows[i][5].trim() : "");
-          mapById.set(idKey.toLowerCase(), {
+          recordsMap.set(idKey.toLowerCase(), {
             timestamp: rows[i][0] ? rows[i][0].trim() : "",
             id: idKey,
             name: rows[i][2] ? rows[i][2].trim() : "",
@@ -1482,7 +1534,7 @@
           });
         }
       }
-      allUniqueRecords = Array.from(mapById.values()).reverse();
+      allUniqueRecords = Array.from(recordsMap.values()).reverse();
 
       if (!stickerId) {
         let localLastId = parseInt(localStorage.getItem('qr_tago_last_id') || '1000', 10);
@@ -1503,13 +1555,12 @@
       }
 
       document.getElementById('display-id').textContent = stickerId;
-      currentRecord = mapById.get(stickerId.toLowerCase()) || null;
+      currentRecord = recordsMap.get(stickerId.toLowerCase()) || null;
 
       document.getElementById('loading-view').classList.add('hidden');
 
       if (currentRecord && currentRecord.phone) {
         window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
-        localStorage.setItem('qr_tago_my_personal_id', stickerId);
         updatePWAManifest(stickerId);
         showOwnerView(currentRecord, false);
       } else {
@@ -1747,6 +1798,7 @@
           isLost: isLost,
           isPrivate: isPriv
         };
+        recordsMap.set(stickerId.toLowerCase(), currentRecord);
         alert(currentLang === 'ar' ? `✅ تم تفعيل الكود رقم ${stickerId} بنجاح! يمكنك الآن تثبيت التطبيق على شاشتك.` : `✅ Tag #${stickerId} activated! You can now install the app.`);
         showOwnerView(currentRecord, true);
       } catch (error) {
