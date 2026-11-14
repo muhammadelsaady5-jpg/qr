@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR-Tago | درع الحماية الذكي</title>
+  <!-- أيقونة اللوجو في لسان المتصفح (Favicon) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
@@ -526,7 +529,6 @@
       pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
     }
 
-    // جلب الشيت بمهلة أقصاها 2.5 ثانية حتى لا يتوقف التحميل أبداً
     async function fetchWithTimeout(resource, options = {}) {
       const { timeout = 2500 } = options;
       const controller = new AbortController();
@@ -550,7 +552,6 @@
         console.warn("استخدام الترقيم الاحتياطي السريع:", err);
       }
 
-      // 1. الدخول من الرابط العام بدون رقم (?id= غير موجود)
       if (!stickerId) {
         let localLastId = parseInt(localStorage.getItem('qr_tago_last_id') || '1000', 10);
         let maxId = isNaN(localLastId) ? 1000 : localLastId;
@@ -570,7 +571,6 @@
         return;
       }
 
-      // 2. الدخول برقم محدد في الرابط (?id=1001)
       document.getElementById('display-id').textContent = stickerId;
       for (let i = rows.length - 1; i >= 1; i--) {
         if (rows[i][1] && rows[i][1].trim().toLowerCase() === stickerId.toLowerCase()) {
