@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>QR-Tago | درع الحماية الذكي</title>
-  <!-- أيقونة اللوجو في لسان المتصفح (Favicon) -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -240,7 +239,7 @@
       border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 16px;
       padding: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
 
     .owner-label {
@@ -253,7 +252,7 @@
       font-size: 22px;
       font-weight: 800;
       color: #ffffff;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .emergency-note {
@@ -266,6 +265,63 @@
       text-align: right;
       line-height: 1.55;
       margin-top: 8px;
+    }
+
+    /* شريط تاريخ التسجيل والعداد الرقمي للاشتراك السنوي */
+    .sub-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(9, 17, 30, 0.92);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: #cbd5e1;
+      gap: 8px;
+    }
+
+    .sub-date-info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .digital-counter {
+      font-family: 'Poppins', 'Cairo', sans-serif;
+      background: rgba(34, 197, 94, 0.14);
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      color: #4ade80;
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .digital-counter.warning {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.5);
+      color: #fbbf24;
+    }
+
+    .digital-counter.expired {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #f87171;
+    }
+
+    .expired-banner {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #fca5a5;
+      line-height: 1.5;
     }
 
     .qr-share-box {
@@ -349,6 +405,13 @@
     .btn-gps {
       background: linear-gradient(135deg, #dc2626, #b91c1c);
       box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+    }
+
+    .btn-renew {
+      background: linear-gradient(135deg, #d4af37, #997a15);
+      color: #09111e;
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
     }
 
     .btn-edit-link {
@@ -435,7 +498,7 @@
 
       <div id="register-view" class="hidden">
         <h2 class="section-title" id="form-title">تفعيل كود حماية جديد</h2>
-        <p class="section-desc" id="form-desc">تم حجز هذا الرقم التسلسلي لك تلقائياً. أدخل بياناتك لربط الكود برقمك فوراً.</p>
+        <p class="section-desc" id="form-desc">تفعيل فوري لمدة 365 يوماً. أدخل بياناتك لربط الكود برقمك الآن.</p>
 
         <form id="activation-form">
           <div class="input-group">
@@ -477,6 +540,22 @@
           <div class="owner-label">هذا الغرض مسجل باسم</div>
           <div class="owner-name" id="view-name">---</div>
           <div id="view-note-box" class="emergency-note hidden"></div>
+
+          <!-- شريط تاريخ التفعيل والعداد الرقمي -->
+          <div class="sub-status-bar">
+            <div class="sub-date-info">
+              <span>📅 التفعيل:</span>
+              <strong id="reg-date-text">--/--/----</strong>
+            </div>
+            <div id="days-counter-badge" class="digital-counter">
+              ⏳ 365 يوم
+            </div>
+          </div>
+        </div>
+
+        <!-- تنبيه انتهاء الاشتراك السنوي -->
+        <div id="expired-box" class="expired-banner hidden">
+          ⚠️ انتهت مدة الاشتراك السنوي (365 يوماً) لهذا الاستيكر. يرجى تجديد الاشتراك لإعادة تفعيل أزرار التواصل.
         </div>
 
         <div id="qr-share-box" class="qr-share-box hidden">
@@ -488,17 +567,23 @@
           </div>
         </div>
 
-        <a id="call-btn" href="#" class="action-btn btn-call">
-          <span>📞 اتصال هاتفي مباشر</span>
-        </a>
+        <div id="active-actions">
+          <a id="call-btn" href="#" class="action-btn btn-call">
+            <span>📞 اتصال هاتفي مباشر</span>
+          </a>
 
-        <a id="wa-btn" href="#" target="_blank" class="action-btn btn-wa">
-          <span>💬 مراسلة عبر واتساب</span>
-        </a>
+          <a id="wa-btn" href="#" target="_blank" class="action-btn btn-wa">
+            <span>💬 مراسلة عبر واتساب</span>
+          </a>
 
-        <button id="gps-btn" onclick="sendLocation()" class="action-btn btn-gps">
-          <span>📍 إرسال موقعي الحالي للمالك (GPS)</span>
-        </button>
+          <button id="gps-btn" onclick="sendLocation()" class="action-btn btn-gps">
+            <span>📍 إرسال موقعي الحالي للمالك (GPS)</span>
+          </button>
+        </div>
+
+        <a id="renew-btn" href="#" target="_blank" class="action-btn btn-renew hidden">
+          <span>🔄 تجديد الاشتراك السنوي الآن</span>
+        </a>
 
         <button onclick="requestEdit()" class="btn-edit-link">
           ✏️ تعديل البيانات (للمالك فقط)
@@ -513,6 +598,9 @@
   <script>
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
     const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
+
+    // ضع رقم واتساب الإدارة الخاص بك هنا لاستقبال طلبات تجديد الاشتراك السنوي (بصيغة دولية بدون +)
+    const ADMIN_WHATSAPP = "201000000000";
 
     const ENTRY_ID    = "entry.566025065";
     const ENTRY_NAME  = "entry.675203836";
@@ -536,6 +624,40 @@
       const response = await fetch(resource, { ...options, signal: controller.signal });
       clearTimeout(id);
       return response;
+    }
+
+    // تحليل تاريخ التسجيل القادم من Google Sheets (Timestamp) وحساب المتبقي من 365 يوم
+    function calculateSubscription(timestampStr) {
+      let regDate = new Date();
+      if (timestampStr) {
+        // يدعم صيغ Google Forms الشائعة مثل MM/DD/YYYY HH:mm:ss أو DD/MM/YYYY
+        const parts = timestampStr.trim().split(/[\s\/\-:]+/);
+        if (parts.length >= 3) {
+          let p0 = parseInt(parts[0], 10);
+          let p1 = parseInt(parts[1], 10);
+          let p2 = parseInt(parts[2], 10);
+          // إذا كان الأول هو السنة YYYY/MM/DD
+          if (p0 > 1000) {
+            regDate = new Date(p0, p1 - 1, p2);
+          } else if (p0 > 12) {
+            // DD/MM/YYYY
+            regDate = new Date(p2, p1 - 1, p0);
+          } else {
+            // MM/DD/YYYY (الافتراضي في Google Forms)
+            const parsed = new Date(timestampStr);
+            if (!isNaN(parsed.getTime())) regDate = parsed;
+          }
+        }
+      }
+
+      const now = new Date();
+      const diffTime = now.getTime() - regDate.getTime();
+      const daysPassed = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
+      const remainingDays = Math.max(0, 365 - daysPassed);
+
+      const formattedDate = `${String(regDate.getDate()).padStart(2, '0')}/${String(regDate.getMonth() + 1).padStart(2, '0')}/${regDate.getFullYear()}`;
+
+      return { formattedDate, remainingDays };
     }
 
     async function fetchStickerData() {
@@ -575,6 +697,7 @@
       for (let i = rows.length - 1; i >= 1; i--) {
         if (rows[i][1] && rows[i][1].trim().toLowerCase() === stickerId.toLowerCase()) {
           currentRecord = {
+            timestamp: rows[i][0] ? rows[i][0].trim() : "",
             id: rows[i][1].trim(),
             name: rows[i][2] ? rows[i][2].trim() : "",
             phone: rows[i][3] ? rows[i][3].trim() : "",
@@ -624,6 +747,32 @@
         noteBox.classList.remove('hidden');
       } else {
         noteBox.classList.add('hidden');
+      }
+
+      // تحديث تاريخ التفعيل والعداد الرقمي للاشتراك (365 يوم)
+      const subInfo = calculateSubscription(data.timestamp);
+      document.getElementById('reg-date-text').textContent = subInfo.formattedDate;
+
+      const counterBadge = document.getElementById('days-counter-badge');
+      counterBadge.classList.remove('warning', 'expired');
+
+      if (subInfo.remainingDays === 0) {
+        counterBadge.textContent = "⛔ 0 يوم (منتهي)";
+        counterBadge.classList.add('expired');
+        document.getElementById('expired-box').classList.remove('hidden');
+        document.getElementById('active-actions').classList.add('hidden');
+        const renewBtn = document.getElementById('renew-btn');
+        renewBtn.classList.remove('hidden');
+        const renewMsg = encodeURIComponent(`مرحباً QR-Tago، أرغب في تجديد الاشتراك السنوي للاستيكر رقم (${stickerId}) باسم (${data.name}).`);
+        renewBtn.href = `https://wa.me/${ADMIN_WHATSAPP}?text=${renewMsg}`;
+      } else {
+        counterBadge.textContent = `⏳ متبقي ${subInfo.remainingDays} يوم`;
+        if (subInfo.remainingDays <= 30) {
+          counterBadge.classList.add('warning');
+        }
+        document.getElementById('expired-box').classList.add('hidden');
+        document.getElementById('active-actions').classList.remove('hidden');
+        document.getElementById('renew-btn').classList.add('hidden');
       }
 
       if (justRegistered) {
@@ -731,8 +880,15 @@
           localStorage.setItem('qr_tago_last_id', String(numericId));
         }
 
-        currentRecord = { id: stickerId, name: nameVal, phone: phoneVal, pin: pinVal, note: noteVal };
-        alert(`✅ تم تفعيل الكود رقم ${stickerId} بنجاح!`);
+        currentRecord = {
+          timestamp: new Date().toISOString(),
+          id: stickerId,
+          name: nameVal,
+          phone: phoneVal,
+          pin: pinVal,
+          note: noteVal
+        };
+        alert(`✅ تم تفعيل الكود رقم ${stickerId} بنجاح لمدة 365 يوم!`);
         showOwnerView(currentRecord, true);
       } catch (error) {
         alert("حدث خطأ أثناء الاتصال، تأكد من الإنترنت وحاول مرة أخرى.");
