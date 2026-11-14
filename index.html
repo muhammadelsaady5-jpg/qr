@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>درع المركبات الذكي - QR</title>
+  <title>درع الحماية الذكي - QR</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -16,6 +16,7 @@
       --primary-glow: rgba(59, 130, 246, 0.35);
       --accent: #f59e0b;
       --whatsapp: #22c55e;
+      --location: #e11d48;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --input-bg: #1e293b;
@@ -183,6 +184,12 @@
       box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
     }
 
+    .btn-location {
+      background: linear-gradient(135deg, #be123c, #e11d48);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(225, 29, 72, 0.3);
+    }
+
     .btn-outline {
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -249,7 +256,6 @@
 
     .hidden { display: none !important; }
 
-    /* نافذة الرقم السري المخصصة */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -278,7 +284,6 @@
       margin-top: 12px;
     }
 
-    /* إشعار منبثق أنيق */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -316,12 +321,12 @@
   <!-- شاشة التحميل -->
   <div id="loadingView">
     <div class="loader"></div>
-    <p>جاري التحقق من بيانات المركبة...</p>
+    <p>جاري التحقق من بيانات الاستيكر...</p>
   </div>
 
   <!-- شاشة عدم وجود كود في الرابط -->
   <div id="noIdView" class="hidden">
-    <h2>نظام حماية وتواصل المركبات</h2>
+    <h2>نظام الحماية والتواصل الذكي</h2>
     <p>يرجى مسح كود الـ QR المطبوع على الاستيكر بكاميرا هاتفك للوصول لبيانات المالك أو تفعيل الاستيكر الجديد.</p>
   </div>
 
@@ -346,8 +351,8 @@
 
   <!-- شاشة عرض بيانات المالك عند المسح -->
   <div id="ownerView" class="hidden">
-    <h2>بيانات مالك المركبة</h2>
-    <p>في حال وجود المركبة في مكان غير مناسب أو لأي طارئ، تواصل مع المالك مباشرة:</p>
+    <h2>بيانات المالك</h2>
+    <p>في حال العثور على هذا الغرض أو لأي طارئ، يمكنك التواصل مع المالك أو إرسال موقعك الحالي له فوراً:</p>
     <div class="info-box">
       <div class="owner-label">المالك المسجل</div>
       <div class="owner-name" id="displayOwner">---</div>
@@ -356,6 +361,7 @@
         <span>📋</span>
       </div>
     </div>
+    <button id="locBtn" onclick="sendLocationViaWhatsApp()" class="btn btn-location">📍 إرسال موقعي الحالي للمالك (GPS)</button>
     <a id="callBtn" href="#" class="btn btn-call">📞 اتصال هاتفي مباشر</a>
     <a id="waBtn" href="#" target="_blank" class="btn btn-wa">💬 مراسلة عبر واتساب</a>
     <button onclick="openPinModal()" class="btn btn-outline">⚙️ تعديل البيانات (للمالك فقط)</button>
@@ -387,12 +393,13 @@
   const params = new URLSearchParams(window.location.search);
   const stickerId = (params.get('id') || '').trim();
   let currentRecord = null;
+  let cleanWhatsAppPhone = '';
 
   function showToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
+    setTimeout(() => t.classList.remove('show'), 3500);
   }
 
   function showView(viewId) {
@@ -411,6 +418,41 @@
     if (!currentRecord || !currentRecord.phone) return;
     navigator.clipboard.writeText(currentRecord.phone);
     showToast("✅ تم نسخ رقم الهاتف");
+  }
+
+  function sendLocationViaWhatsApp() {
+    if (!navigator.geolocation) {
+      showToast("⚠️ متصفحك لا يدعم تحديد الموقع، استخدم زر الواتساب");
+      return;
+    }
+
+    const btn = document.getElementById('locBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "📡 جاري التقاط موقعك بدقة...";
+
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        const msg = encodeURIComponent(
+          `مرحباً، لقد وجدت الغرض الخاص بك الذي يحمل استيكر رقم (${currentRecord.id}).\n` +
+          `هذا هو موقعي الحالي على الخريطة للتسليم:\n${mapsUrl}`
+        );
+
+        window.open(`https://wa.me/${cleanWhatsAppPhone}?text=${msg}`, '_blank');
+      },
+      function(error) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+        showToast("⚠️ يرجى تفعيل الـ GPS والموافقة على إذن الموقع");
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   }
 
   function parseCSV(text) {
@@ -448,7 +490,7 @@
         if (rows[i][1] && rows[i][1].toLowerCase() === stickerId.toLowerCase()) {
           currentRecord = {
             id: rows[i][1],
-            name: rows[i][2] || 'مالك المركبة',
+            name: rows[i][2] || 'المالك',
             phone: rows[i][3] || '',
             pin: rows[i][4] || ''
           };
@@ -470,12 +512,12 @@
     document.getElementById('displayOwner').textContent = data.name;
     document.getElementById('displayPhone').textContent = data.phone;
 
-    let cleanPhone = data.phone.replace(/\D/g, '');
-    if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+    cleanWhatsAppPhone = data.phone.replace(/\D/g, '');
+    if (cleanWhatsAppPhone.startsWith('01')) cleanWhatsAppPhone = '2' + cleanWhatsAppPhone;
 
     document.getElementById('callBtn').href = "tel:" + data.phone;
-    const waMsg = encodeURIComponent("مرحباً، قمت بمسح كود الاستيكر رقم (" + data.id + ") الخاص بمركبتك.");
-    document.getElementById('waBtn').href = "https://wa.me/" + cleanPhone + "?text=" + waMsg;
+    const waMsg = encodeURIComponent("مرحباً، قمت بمسح كود الاستيكر رقم (" + data.id + ") الخاص بك.");
+    document.getElementById('waBtn').href = "https://wa.me/" + cleanWhatsAppPhone + "?text=" + waMsg;
 
     showView('ownerView');
   }
