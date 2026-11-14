@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>درع المركبات الذكي - QR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: #131a2a;
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-glow: rgba(59, 130, 246, 0.35);
+      --accent: #f59e0b;
+      --whatsapp: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Tajawal', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #172038 0%, var(--bg-dark) 75%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: var(--text-main);
+    }
+
+    .card {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 420px;
+      border-radius: 24px;
+      padding: 28px 24px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--whatsapp));
+    }
+
+    .logo-circle {
+      width: 64px;
+      height: 64px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 14px;
+      font-size: 30px;
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    h2 {
+      font-size: 23px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 14px;
+      text-align: right;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--input-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      font-size: 15px;
+      color: #fff;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .toggle-pin {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      margin-bottom: 12px;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      box-shadow: 0 8px 20px var(--primary-glow);
+    }
+
+    .btn-call {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-wa {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      font-size: 13px;
+      padding: 11px;
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    .info-box {
+      background: rgba(15, 23, 42, 0.7);
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .owner-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .owner-name {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .phone-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 15px;
+      color: #e2e8f0;
+      direction: ltr;
+      cursor: pointer;
+    }
+
+    .loader {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 0.9s linear infinite;
+      margin: 24px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .hidden { display: none !important; }
+
+    /* نافذة الرقم السري المخصصة */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    /* إشعار منبثق أنيق */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+      z-index: 200;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo-circle">🛡️</div>
+  <div id="codeBadge" class="badge">كود الاستيكر: ---</div>
+
+  <!-- شاشة التحميل -->
+  <div id="loadingView">
+    <div class="loader"></div>
+    <p>جاري التحقق من بيانات المركبة...</p>
+  </div>
+
+  <!-- شاشة عدم وجود كود في الرابط -->
+  <div id="noIdView" class="hidden">
+    <h2>نظام حماية وتواصل المركبات</h2>
+    <p>يرجى مسح كود الـ QR المطبوع على الاستيكر بكاميرا هاتفك للوصول لبيانات المالك أو تفعيل الاستيكر الجديد.</p>
+  </div>
+
+  <!-- شاشة تسجيل وتفعيل الاستيكر الجديد -->
+  <div id="registerView" class="hidden">
+    <h2 id="regTitle">تفعيل الاستيكر لأول مرة</h2>
+    <p>هذا الاستيكر جاهز للتفعيل. أدخل بياناتك لربط الكود برقمك فوراً:</p>
+    <form id="regForm">
+      <div class="input-group">
+        <input type="text" id="ownerName" placeholder="اسم المالك (أو اللقب)" required>
+      </div>
+      <div class="input-group">
+        <input type="tel" id="ownerPhone" placeholder="رقم الهاتف / الواتساب (010xxxxxxxx)" required>
+      </div>
+      <div class="input-group">
+        <input type="password" id="ownerPin" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً" required>
+        <button type="button" class="toggle-pin" onclick="togglePinVisibility()">👁️</button>
+      </div>
+      <button type="submit" class="btn btn-primary" id="submitBtn">✨ حفظ وتفعيل الاستيكر</button>
+    </form>
+  </div>
+
+  <!-- شاشة عرض بيانات المالك عند المسح -->
+  <div id="ownerView" class="hidden">
+    <h2>بيانات مالك المركبة</h2>
+    <p>في حال وجود المركبة في مكان غير مناسب أو لأي طارئ، تواصل مع المالك مباشرة:</p>
+    <div class="info-box">
+      <div class="owner-label">المالك المسجل</div>
+      <div class="owner-name" id="displayOwner">---</div>
+      <div class="phone-pill" onclick="copyPhone()" title="اضغط لنسخ الرقم">
+        <span id="displayPhone">---</span>
+        <span>📋</span>
+      </div>
+    </div>
+    <a id="callBtn" href="#" class="btn btn-call">📞 اتصال هاتفي مباشر</a>
+    <a id="waBtn" href="#" target="_blank" class="btn btn-wa">💬 مراسلة عبر واتساب</a>
+    <button onclick="openPinModal()" class="btn btn-outline">⚙️ تعديل البيانات (للمالك فقط)</button>
+  </div>
+</div>
+
+<div class="footer">نظام الاستيكر الذكي • حماية وتواصل سريع</div>
+
+<!-- نافذة التحقق من الرقم السري -->
+<div id="pinModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h2 style="font-size:19px;">تأكيد هوية المالك</h2>
+    <p style="margin-bottom:14px;">أدخل الرقم السري (PIN) الخاص بهذا الاستيكر:</p>
+    <input type="password" id="verifyPinInput" placeholder="الرقم السري" style="text-align:center; letter-spacing:3px;">
+    <div class="modal-actions">
+      <button onclick="verifyPin()" class="btn btn-primary" style="margin:0;">تأكيد</button>
+      <button onclick="closePinModal()" class="btn btn-outline" style="margin:0;">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- إشعار منبثق -->
+<div id="toast" class="toast"></div>
+
+<script>
+  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
+  const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
+
+  const params = new URLSearchParams(window.location.search);
+  const stickerId = (params.get('id') || '').trim();
+  let currentRecord = null;
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function showView(viewId) {
+    ['loadingView', 'noIdView', 'registerView', 'ownerView'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(viewId).classList.remove('hidden');
+  }
+
+  function togglePinVisibility() {
+    const pinInput = document.getElementById('ownerPin');
+    pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
+  }
+
+  function copyPhone() {
+    if (!currentRecord || !currentRecord.phone) return;
+    navigator.clipboard.writeText(currentRecord.phone);
+    showToast("✅ تم نسخ رقم الهاتف");
+  }
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [], cell = '', inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i], next = text[i+1];
+      if (c === '"' && inQuotes && next === '"') { cell += '"'; i++; }
+      else if (c === '"') { inQuotes = !inQuotes; }
+      else if (c === ',' && !inQuotes) { row.push(cell.trim()); cell = ''; }
+      else if ((c === '\n' || (c === '\r' && next === '\n')) && !inQuotes) {
+        if (c === '\r') i++;
+        row.push(cell.trim());
+        rows.push(row);
+        row = []; cell = '';
+      } else { cell += c; }
+    }
+    if (cell || row.length) { row.push(cell.trim()); rows.push(row); }
+    return rows;
+  }
+
+  async function init() {
+    if (!stickerId) {
+      showView('noIdView');
+      return;
+    }
+    document.getElementById('codeBadge').textContent = "كود الاستيكر: " + stickerId;
+
+    try {
+      const res = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
+      const csvText = await res.text();
+      const rows = parseCSV(csvText);
+
+      for (let i = rows.length - 1; i >= 1; i--) {
+        if (rows[i][1] && rows[i][1].toLowerCase() === stickerId.toLowerCase()) {
+          currentRecord = {
+            id: rows[i][1],
+            name: rows[i][2] || 'مالك المركبة',
+            phone: rows[i][3] || '',
+            pin: rows[i][4] || ''
+          };
+          break;
+        }
+      }
+
+      if (currentRecord && currentRecord.phone) {
+        renderOwnerView(currentRecord);
+      } else {
+        showView('registerView');
+      }
+    } catch (err) {
+      showToast("⚠️ تعذر الاتصال، يرجى تحديث الصفحة");
+    }
+  }
+
+  function renderOwnerView(data) {
+    document.getElementById('displayOwner').textContent = data.name;
+    document.getElementById('displayPhone').textContent = data.phone;
+
+    let cleanPhone = data.phone.replace(/\D/g, '');
+    if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+
+    document.getElementById('callBtn').href = "tel:" + data.phone;
+    const waMsg = encodeURIComponent("مرحباً، قمت بمسح كود الاستيكر رقم (" + data.id + ") الخاص بمركبتك.");
+    document.getElementById('waBtn').href = "https://wa.me/" + cleanPhone + "?text=" + waMsg;
+
+    showView('ownerView');
+  }
+
+  function openPinModal() {
+    document.getElementById('verifyPinInput').value = '';
+    document.getElementById('pinModal').classList.remove('hidden');
+    document.getElementById('verifyPinInput').focus();
+  }
+
+  function closePinModal() {
+    document.getElementById('pinModal').classList.add('hidden');
+  }
+
+  function verifyPin() {
+    const enteredPin = document.getElementById('verifyPinInput').value.trim();
+    if (enteredPin === currentRecord.pin.trim()) {
+      closePinModal();
+      document.getElementById('regTitle').textContent = "تعديل بيانات الاستيكر";
+      document.getElementById('ownerName').value = currentRecord.name;
+      document.getElementById('ownerPhone').value = currentRecord.phone;
+      document.getElementById('ownerPin').value = currentRecord.pin;
+      showView('registerView');
+    } else {
+      showToast("❌ الرقم السري غير صحيح");
+    }
+  }
+
+  document.getElementById('regForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = "⏳ جاري الحفظ والتفعيل...";
+
+    const name = document.getElementById('ownerName').value.trim();
+    const phone = document.getElementById('ownerPhone').value.trim();
+    const pin = document.getElementById('ownerPin').value.trim();
+
+    const formData = new URLSearchParams();
+    formData.append('entry.566025065', stickerId);
+    formData.append('entry.675203836', name);
+    formData.append('entry.1411822485', phone);
+    formData.append('entry.787112400', pin);
+
+    try {
+      await fetch(FORM_ACTION_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      });
+
+      currentRecord = { id: stickerId, name, phone, pin };
+      showToast("✅ تم حفظ وتفعيل الاستيكر بنجاح!");
+      renderOwnerView(currentRecord);
+    } catch (err) {
+      showToast("⚠️ تعذر الإرسال، تحقق من الإنترنت");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "✨ حفظ وتفعيل الاستيكر";
+    }
+  });
+
+  init();
+</script>
+
+</body>
+</html>
