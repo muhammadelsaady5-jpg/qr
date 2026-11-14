@@ -3,9 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09111e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="QR-Tago">
   <title>QR-Tago | درع الحماية الذكي</title>
+
+  <!-- أيقونة التطبيق واللسان -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
+  <link id="pwa-manifest" rel="manifest" href="">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
@@ -58,7 +66,7 @@
 
     .container {
       width: 100%;
-      max-width: 420px;
+      max-width: 430px;
       position: relative;
       z-index: 1;
     }
@@ -78,7 +86,6 @@
       transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* وضع الطوارئ / المفقود */
     .main-card.lost-mode {
       border-color: #ef4444;
       box-shadow: 
@@ -86,7 +93,6 @@
         inset 0 1px 0 rgba(248, 113, 113, 0.35);
     }
 
-    /* زر تبديل اللغة */
     .lang-toggle-btn {
       position: absolute;
       top: 14px;
@@ -99,7 +105,6 @@
       padding: 4px 10px;
       border-radius: 20px;
       cursor: pointer;
-      transition: background 0.2s;
       z-index: 5;
     }
 
@@ -108,8 +113,24 @@
       right: 14px;
     }
 
-    .lang-toggle-btn:hover {
-      background: rgba(212, 175, 55, 0.3);
+    .install-top-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(37, 99, 235, 0.22);
+      border: 1px solid rgba(96, 165, 250, 0.5);
+      color: #93c5fd;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 5;
+    }
+
+    html[dir="ltr"] .install-top-btn {
+      right: auto;
+      left: 14px;
     }
 
     .logo-wrapper {
@@ -118,6 +139,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      cursor: pointer;
+      user-select: none;
     }
 
     .shield-svg {
@@ -294,7 +317,6 @@
       right: 14px;
     }
 
-    /* خيارات إضافية (مفقود / إخفاء الرقم) */
     .options-box {
       background: rgba(11, 18, 32, 0.7);
       border: 1px solid rgba(212, 175, 55, 0.28);
@@ -561,6 +583,88 @@
       width: 100%;
     }
 
+    /* لوحة تحكم الإدارة (Admin Dashboard) */
+    .admin-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      background: rgba(9, 17, 30, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 12px;
+      padding: 10px 6px;
+    }
+
+    .stat-num {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+
+    .stat-lbl {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .admin-list {
+      max-height: 330px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .admin-item {
+      background: rgba(10, 17, 30, 0.85);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 12px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .admin-item-info {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .admin-item-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .mini-wa-btn {
+      background: #16a34a;
+      color: #fff;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 7px;
+      text-align: center;
+    }
+
+    .mini-view-btn {
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold-light);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 7px;
+      text-decoration: none;
+      text-align: center;
+    }
+
     .footer-text {
       margin-top: 16px;
       font-size: 12px;
@@ -592,10 +696,14 @@
   <div class="container">
     <div class="main-card" id="main-card">
       
+      <!-- زر تثبيت التطبيق (PWA) يظهر تلقائياً عند دعم المتصفح -->
+      <button type="button" class="install-top-btn hidden" id="install-app-btn" onclick="installPWA()">📲 تثبيت التطبيق</button>
+
       <!-- زر تبديل اللغة -->
       <button type="button" class="lang-toggle-btn" id="lang-btn" onclick="toggleLanguage()">English 🌐</button>
 
-      <div class="logo-wrapper">
+      <!-- اللوجو (5 ضغطات متتالية تفتح لوحة تحكم الإدارة) -->
+      <div class="logo-wrapper" onclick="handleLogoTap()" title="QR-Tago">
         <svg class="shield-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="goldGrad" x1="15" y1="10" x2="105" y2="110" gradientUnits="userSpaceOnUse">
@@ -624,7 +732,7 @@
         <div class="brand-sub" data-i18n="brandSub">درع الحماية الذكي</div>
       </div>
 
-      <div class="badges-row">
+      <div class="badges-row" id="badges-row">
         <div class="id-badge">
           <span data-i18n="stickerLabel">كود الاستيكر:</span>
           <span id="display-id">1001</span>
@@ -684,7 +792,6 @@
             </span>
           </div>
 
-          <!-- خيارات ذكية إضافية -->
           <div class="options-box">
             <label class="checkbox-label">
               <input type="checkbox" id="opt-lost">
@@ -765,6 +872,38 @@
         </button>
       </div>
 
+      <!-- لوحة تحكم الإدارة السرية (Admin Dashboard) -->
+      <div id="admin-view" class="hidden">
+        <h2 class="section-title">👑 لوحة تحكم الإدارة</h2>
+        <p class="section-desc">متابعة جميع الاستيكرات المفعلة وتنبيهات التجديد السنوي</p>
+
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-lbl">إجمالي العملاء</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-active" style="color:#4ade80;">0</div>
+            <div class="stat-lbl">نشط حالياً</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-expiring" style="color:#fbbf24;">0</div>
+            <div class="stat-lbl">قارب/منتهي</div>
+          </div>
+        </div>
+
+        <div class="input-group" style="margin-bottom:8px;">
+          <input type="text" id="admin-search" class="input-field" placeholder="ابحث بالاسم أو رقم الكود أو الهاتف..." oninput="renderAdminList()">
+          <span class="input-icon">🔍</span>
+        </div>
+
+        <div id="admin-records-list" class="admin-list"></div>
+
+        <button type="button" onclick="closeAdminPanel()" class="btn-edit-link" style="margin-top:12px;">
+          🔙 العودة لصفحة الاستيكر
+        </button>
+      </div>
+
     </div>
 
     <div class="footer-text" data-i18n="footerText">نظام الاستيكر الذكي • حماية وتواصل سريع</div>
@@ -774,8 +913,9 @@
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
     const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
 
-    // ضع رقم واتساب الإدارة الخاص بك هنا لاستقبال طلبات تجديد الاشتراك
+    // إعدادات الإدارة (عدّل رقم الواتساب والرقم السري للوحة التحكم حسب رغبتك)
     const ADMIN_WHATSAPP = "201000000000";
+    const ADMIN_PIN      = "2026";
 
     const ENTRY_ID    = "entry.566025065";
     const ENTRY_NAME  = "entry.675203836";
@@ -783,11 +923,145 @@
     const ENTRY_PIN   = "entry.787112400";
     const ENTRY_NOTE  = "entry.1223610661";
 
+    // إعداد PWA Manifest لتثبيت الصفحة كتطبيق مستقل على الموبايل
+    (function setupPWA() {
+      const svgIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E";
+      const manifestObj = {
+        name: "QR-Tago | درع الحماية الذكي",
+        short_name: "QR-Tago",
+        start_url: window.location.origin + window.location.pathname,
+        display: "standalone",
+        background_color: "#09111e",
+        theme_color: "#09111e",
+        icons: [
+          { src: svgIcon, sizes: "192x192", type: "image/svg+xml" },
+          { src: svgIcon, sizes: "512x512", type: "image/svg+xml" }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
+      document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(blob));
+    })();
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-app-btn').classList.remove('hidden');
+    });
+
+    async function installPWA() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('install-app-btn').classList.add('hidden');
+      } else {
+        alert("لتثبيت التطبيق على هاتفك:\nاضغط على قائمة المتصفح (⋮) في الأعلى ثم اختر (إضافة إلى الشاشة الرئيسية / Install App).");
+      }
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     let stickerId = (urlParams.get('id') || '').trim();
+    const openAdminDirectly = urlParams.get('admin') === '1';
+
     let currentRecord = null;
+    let allUniqueRecords = [];
     let currentLang = 'ar';
     let lastRemainingDays = 365;
+
+    // فتح لوحة الإدارة بالضغط 5 مرات على اللوجو
+    let logoTapCount = 0;
+    let logoTapTimer = null;
+    function handleLogoTap() {
+      logoTapCount++;
+      clearTimeout(logoTapTimer);
+      if (logoTapCount >= 5) {
+        logoTapCount = 0;
+        openAdminPanel();
+      } else {
+        logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1500);
+      }
+    }
+
+    function openAdminPanel() {
+      const pin = prompt("👑 أدخل الرقم السري للوحة تحكم الإدارة:");
+      if (pin === null) return;
+      if (pin.trim() === ADMIN_PIN) {
+        document.getElementById('loading-view').classList.add('hidden');
+        document.getElementById('register-view').classList.add('hidden');
+        document.getElementById('owner-view').classList.add('hidden');
+        document.getElementById('badges-row').classList.add('hidden');
+        document.getElementById('admin-view').classList.remove('hidden');
+        renderAdminList();
+      } else {
+        alert("❌ الرقم السري للإدارة غير صحيح!");
+      }
+    }
+
+    function closeAdminPanel() {
+      document.getElementById('admin-view').classList.add('hidden');
+      document.getElementById('badges-row').classList.remove('hidden');
+      if (currentRecord && currentRecord.phone) {
+        document.getElementById('owner-view').classList.remove('hidden');
+      } else {
+        document.getElementById('register-view').classList.remove('hidden');
+      }
+    }
+
+    function renderAdminList() {
+      const searchQ = (document.getElementById('admin-search').value || '').trim().toLowerCase();
+      let activeCount = 0;
+      let expiringCount = 0;
+
+      allUniqueRecords.forEach(rec => {
+        const sub = calculateSubscription(rec.timestamp);
+        if (sub.remainingDays > 30) activeCount++;
+        else expiringCount++;
+      });
+
+      document.getElementById('stat-total').textContent = allUniqueRecords.length;
+      document.getElementById('stat-active').textContent = activeCount;
+      document.getElementById('stat-expiring').textContent = expiringCount;
+
+      const listEl = document.getElementById('admin-records-list');
+      listEl.innerHTML = "";
+
+      const filtered = allUniqueRecords.filter(r =>
+        r.id.toLowerCase().includes(searchQ) ||
+        r.name.toLowerCase().includes(searchQ) ||
+        r.phone.includes(searchQ)
+      );
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:13px; padding:16px;">لا توجد نتائج مطابقة</div>`;
+        return;
+      }
+
+      filtered.forEach(rec => {
+        const sub = calculateSubscription(rec.timestamp);
+        let cleanPhone = rec.phone.replace(/\D/g, '');
+        if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+        const waText = encodeURIComponent(`مرحباً ${rec.name}، معك إدارة QR-Tago بخصوص استيكر الحماية رقم (${rec.id}). متبقي في اشتراكك ${sub.remainingDays} يوم.`);
+        const baseUrl = window.location.origin + window.location.pathname;
+
+        const statusColor = sub.remainingDays === 0 ? '#f87171' : (sub.remainingDays <= 30 ? '#fbbf24' : '#4ade80');
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'admin-item';
+        itemDiv.innerHTML = `
+          <div class="admin-item-info">
+            <div><strong style="color:var(--gold-light);">#${rec.id}</strong> • <strong>${rec.name}</strong></div>
+            <div style="color:#94a3b8;">📱 ${rec.phone}</div>
+            <div style="color:${statusColor}; font-weight:700;">⏳ متبقي ${sub.remainingDays} يوم (${sub.formattedDate})</div>
+          </div>
+          <div class="admin-item-actions">
+            <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="mini-wa-btn">واتساب</a>
+            <a href="${baseUrl}?id=${encodeURIComponent(rec.id)}" class="mini-view-btn">فتح</a>
+          </div>
+        `;
+        listEl.appendChild(itemDiv);
+      });
+    }
 
     const CATEGORIES = {
       general: { ar: "🛡️ حماية عامة", en: "🛡️ General" },
@@ -882,7 +1156,6 @@
       }
     }
 
-    // ترميز وفك ترميز الإعدادات الذكية داخل حقل الملاحظات دون تغيير بنية الشيت
     function encodeMetadata(note, category, isLost, isPrivate) {
       let flags = [];
       if (category && category !== 'general') flags.push(`cat:${category}`);
@@ -979,6 +1252,27 @@
         console.warn("Fallback numbering:", err);
       }
 
+      // تجميع أحدث سجل لكل كود لاستخدامه في لوحة الإدارة
+      const mapById = new Map();
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i][1] && rows[i][2]) {
+          const idKey = rows[i][1].trim();
+          const meta = decodeMetadata(rows[i][5] ? rows[i][5].trim() : "");
+          mapById.set(idKey.toLowerCase(), {
+            timestamp: rows[i][0] ? rows[i][0].trim() : "",
+            id: idKey,
+            name: rows[i][2] ? rows[i][2].trim() : "",
+            phone: rows[i][3] ? rows[i][3].trim() : "",
+            pin: rows[i][4] ? rows[i][4].trim() : "",
+            note: meta.cleanNote,
+            category: meta.category,
+            isLost: meta.isLost,
+            isPrivate: meta.isPrivate
+          });
+        }
+      }
+      allUniqueRecords = Array.from(mapById.values()).reverse();
+
       if (!stickerId) {
         let localLastId = parseInt(localStorage.getItem('qr_tago_last_id') || '1000', 10);
         let maxId = isNaN(localLastId) ? 1000 : localLastId;
@@ -993,27 +1287,12 @@
         document.getElementById('display-id').textContent = stickerId;
         document.getElementById('loading-view').classList.add('hidden');
         document.getElementById('register-view').classList.remove('hidden');
+        if (openAdminDirectly) openAdminPanel();
         return;
       }
 
       document.getElementById('display-id').textContent = stickerId;
-      for (let i = rows.length - 1; i >= 1; i--) {
-        if (rows[i][1] && rows[i][1].trim().toLowerCase() === stickerId.toLowerCase()) {
-          const meta = decodeMetadata(rows[i][5] ? rows[i][5].trim() : "");
-          currentRecord = {
-            timestamp: rows[i][0] ? rows[i][0].trim() : "",
-            id: rows[i][1].trim(),
-            name: rows[i][2] ? rows[i][2].trim() : "",
-            phone: rows[i][3] ? rows[i][3].trim() : "",
-            pin: rows[i][4] ? rows[i][4].trim() : "",
-            note: meta.cleanNote,
-            category: meta.category,
-            isLost: meta.isLost,
-            isPrivate: meta.isPrivate
-          };
-          break;
-        }
-      }
+      currentRecord = mapById.get(stickerId.toLowerCase()) || null;
 
       document.getElementById('loading-view').classList.add('hidden');
 
@@ -1022,6 +1301,8 @@
       } else {
         document.getElementById('register-view').classList.remove('hidden');
       }
+
+      if (openAdminDirectly) openAdminPanel();
     }
 
     function parseCSV(str) {
@@ -1048,13 +1329,11 @@
 
       document.getElementById('view-name').textContent = data.name;
 
-      // عرض شارة نوع الغرض
       const catBadge = document.getElementById('category-badge');
       const catKey = data.category || 'general';
       catBadge.textContent = CATEGORIES[catKey] ? CATEGORIES[catKey][currentLang] : CATEGORIES.general[currentLang];
       catBadge.classList.remove('hidden');
 
-      // وضع المفقود / المكافأة
       const mainCard = document.getElementById('main-card');
       const lostBanner = document.getElementById('lost-banner');
       if (data.isLost) {
@@ -1065,7 +1344,6 @@
         lostBanner.classList.add('hidden');
       }
 
-      // وضع الخصوصية (إخفاء الاتصال المباشر وحفظ الرقم)
       const callBtn = document.getElementById('call-btn');
       const vcardBtn = document.getElementById('vcard-btn');
       if (data.isPrivate) {
@@ -1118,7 +1396,6 @@
       document.getElementById('wa-btn').href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
     }
 
-    // تحميل بطاقة جهة اتصال مباشرة (vCard)
     function downloadVCard() {
       if (!currentRecord) return;
       const vcard = [
