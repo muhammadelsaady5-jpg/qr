@@ -92,7 +92,6 @@
         inset 0 1px 0 rgba(248, 113, 113, 0.35);
     }
 
-    /* أزرار التحكم العلوية (اللغة + الصوت + التثبيت) */
     .top-controls-left {
       position: absolute;
       top: 14px;
@@ -598,16 +597,32 @@
       box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
     }
 
+    .owner-footer-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
     .btn-edit-link {
       background: transparent;
       border: 1px solid rgba(212, 175, 55, 0.4);
       color: var(--gold-light);
-      font-size: 13px;
-      padding: 9px 14px;
+      font-size: 12.5px;
+      padding: 9px 10px;
       border-radius: 10px;
       cursor: pointer;
-      margin-top: 4px;
-      width: 100%;
+      flex: 1;
+    }
+
+    .btn-new-tag-link {
+      background: rgba(59, 130, 246, 0.14);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 12.5px;
+      padding: 9px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      flex: 1;
     }
 
     .admin-stats-grid {
@@ -896,9 +911,14 @@
           <span data-i18n="renewBtn">🔄 تجديد الاشتراك السنوي الآن</span>
         </a>
 
-        <button onclick="requestEdit()" class="btn-edit-link">
-          <span data-i18n="editBtn">✏️ تعديل البيانات (للمالك فقط)</span>
-        </button>
+        <div class="owner-footer-btns">
+          <button onclick="requestEdit()" class="btn-edit-link">
+            <span data-i18n="editBtn">✏️ تعديل البيانات</span>
+          </button>
+          <button onclick="registerAnotherSticker()" class="btn-new-tag-link">
+            <span data-i18n="newTagBtn">➕ تفعيل كود آخر</span>
+          </button>
+        </div>
       </div>
 
       <!-- لوحة تحكم الإدارة السرية -->
@@ -951,19 +971,17 @@
     const ENTRY_PIN   = "entry.787112400";
     const ENTRY_NOTE  = "entry.1223610661";
 
-    // ==========================================
-    // محرك الموسيقى الخلفية الهادئة (Web Audio Ambient)
-    // ==========================================
+    // محرك الموسيقى الخلفية الهادئة
     let audioCtx = null;
     let isMusicPlaying = false;
     let musicInterval = null;
     let userManuallyMuted = false;
 
     const AMBIENT_CHORDS = [
-      [261.63, 329.63, 392.00, 493.88], // Cmaj7
-      [220.00, 261.63, 329.63, 392.00], // Am7
-      [174.61, 220.00, 261.63, 349.23], // Fmaj7
-      [196.00, 246.94, 293.66, 392.00]  // G6
+      [261.63, 329.63, 392.00, 493.88],
+      [220.00, 261.63, 329.63, 392.00],
+      [174.61, 220.00, 261.63, 349.23],
+      [196.00, 246.94, 293.66, 392.00]
     ];
     let chordIndex = 0;
 
@@ -1029,7 +1047,6 @@
       }
     }
 
-    // تشغيل الموسيقى الهادئة تلقائياً عند أول لمسة من المستخدم (ما لم يقم بكتمها يدوياً)
     function initAudioOnFirstTouch() {
       if (!isMusicPlaying && !userManuallyMuted) {
         startAmbientMusic();
@@ -1038,13 +1055,18 @@
     }
     document.addEventListener('pointerdown', initAudioOnFirstTouch);
 
-    // إعداد PWA Manifest
-    (function setupPWA() {
+    // تحديث رابط PWA Manifest ديناميكياً ليرتبط بحساب العميل الشخصي فور تسجيله
+    let manifestBlobUrl = null;
+    function updatePWAManifest(targetId) {
+      if (manifestBlobUrl) URL.revokeObjectURL(manifestBlobUrl);
       const svgIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E";
+      const baseUrl = window.location.origin + window.location.pathname;
+      const startUrl = targetId ? `${baseUrl}?id=${encodeURIComponent(targetId)}` : baseUrl;
+
       const manifestObj = {
-        name: "QR-Tago | درع الحماية الذكي",
-        short_name: "QR-Tago",
-        start_url: window.location.origin + window.location.pathname,
+        name: targetId ? `QR-Tago #${targetId}` : "QR-Tago | درع الحماية الذكي",
+        short_name: targetId ? `QR-Tago #${targetId}` : "QR-Tago",
+        start_url: startUrl,
         display: "standalone",
         background_color: "#09111e",
         theme_color: "#09111e",
@@ -1054,8 +1076,9 @@
         ]
       };
       const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-      document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(blob));
-    })();
+      manifestBlobUrl = URL.createObjectURL(blob);
+      document.getElementById('pwa-manifest').setAttribute('href', manifestBlobUrl);
+    }
 
     let deferredPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -1071,13 +1094,20 @@
         deferredPrompt = null;
         document.getElementById('install-app-btn').classList.add('hidden');
       } else {
-        alert("لتثبيت التطبيق على هاتفك:\nاضغط على قائمة المتصفح (⋮) في الأعلى ثم اختر (إضافة إلى الشاشة الرئيسية / Install App).");
+        alert("لتثبيت التطبيق ببياناتك على الشاشة الرئيسية:\nاضغط على قائمة المتصفح (⋮) في الأعلى ثم اختر (إضافة إلى الشاشة الرئيسية / Install App).");
       }
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    let stickerId = (urlParams.get('id') || '').trim();
+    const urlIdParam = (urlParams.get('id') || '').trim();
+    const forceNewSticker = urlParams.get('new') === '1';
     const openAdminDirectly = urlParams.get('admin') === '1';
+
+    // استرجاع الكود الشخصي المحفوظ في جهاز العميل إذا فتح التطبيق مباشرة بدون ?id=
+    const savedPersonalId = (localStorage.getItem('qr_tago_my_personal_id') || '').trim();
+    let stickerId = urlIdParam || (!forceNewSticker ? savedPersonalId : '');
+
+    updatePWAManifest(stickerId);
 
     let currentRecord = null;
     let allUniqueRecords = [];
@@ -1212,7 +1242,8 @@
         gpsBtn: "📍 إرسال موقعي الحالي للمالك (GPS)",
         vcardBtn: "📇 حفظ جهة الاتصال في الهاتف",
         renewBtn: "🔄 تجديد الاشتراك السنوي الآن",
-        editBtn: "✏️ تعديل البيانات (للمالك فقط)",
+        editBtn: "✏️ تعديل البيانات",
+        newTagBtn: "➕ تفعيل كود آخر",
         footerText: "نظام الاستيكر الذكي • حماية وتواصل سريع"
       },
       en: {
@@ -1241,7 +1272,8 @@
         gpsBtn: "📍 Send My Current GPS Location",
         vcardBtn: "📇 Save Contact to Phone",
         renewBtn: "🔄 Renew Annual Subscription",
-        editBtn: "✏️ Edit Details (Owner Only)",
+        editBtn: "✏️ Edit Details",
+        newTagBtn: "➕ Register New Tag",
         footerText: "Smart Tag System • Instant Protection & Contact"
       }
     };
@@ -1410,6 +1442,9 @@
       document.getElementById('loading-view').classList.add('hidden');
 
       if (currentRecord && currentRecord.phone) {
+        // تحديث رابط المتصفح وملف التطبيق ليفتح دائماً على كود العميل
+        window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
+        updatePWAManifest(stickerId);
         showOwnerView(currentRecord, false);
       } else {
         document.getElementById('register-view').classList.remove('hidden');
@@ -1499,6 +1534,7 @@
         document.getElementById('generated-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(personalUrl)}`;
         document.getElementById('qr-share-box').classList.remove('hidden');
         window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
+        updatePWAManifest(stickerId);
       }
 
       let cleanPhone = data.phone.replace(/\D/g, '');
@@ -1507,6 +1543,11 @@
       callBtn.href = "tel:" + data.phone;
       const waMsg = encodeURIComponent(`مرحباً ${data.name}، قمت بمسح كود الحماية الذكي QR-Tago الخاص بك (كود رقم ${stickerId}).`);
       document.getElementById('wa-btn').href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
+    }
+
+    function registerAnotherSticker() {
+      const baseUrl = window.location.origin + window.location.pathname;
+      window.location.href = `${baseUrl}?new=1`;
     }
 
     function downloadVCard() {
@@ -1627,6 +1668,9 @@
           localStorage.setItem('qr_tago_last_id', String(numericId));
         }
 
+        // حفظ الكود الشخصي للعميل في ذاكرة الجهاز ليفتح حسابه مباشرة من أيقونة التطبيق
+        localStorage.setItem('qr_tago_my_personal_id', stickerId);
+
         currentRecord = {
           timestamp: new Date().toISOString(),
           id: stickerId,
@@ -1638,7 +1682,7 @@
           isLost: isLost,
           isPrivate: isPriv
         };
-        alert(currentLang === 'ar' ? `✅ تم تفعيل الكود رقم ${stickerId} بنجاح لمدة 365 يوم!` : `✅ Tag #${stickerId} activated for 365 days!`);
+        alert(currentLang === 'ar' ? `✅ تم تفعيل الكود رقم ${stickerId} بنجاح! يمكنك الآن تثبيت التطبيق على شاشتك.` : `✅ Tag #${stickerId} activated! You can now install the app.`);
         showOwnerView(currentRecord, true);
       } catch (error) {
         alert(currentLang === 'ar' ? "حدث خطأ أثناء الاتصال، تأكد من الإنترنت وحاول مرة أخرى." : "Connection error, please try again.");
