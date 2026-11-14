@@ -3,614 +3,668 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>درع الحماية الذكي - QR</title>
+  <title>QR-Tago | درع الحماية الذكي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0b0f19;
-      --card-bg: #131a2a;
-      --card-border: rgba(255, 255, 255, 0.08);
-      --primary: #3b82f6;
-      --primary-glow: rgba(59, 130, 246, 0.35);
-      --accent: #f59e0b;
-      --whatsapp: #22c55e;
-      --location: #e11d48;
-      --text-main: #f8fafc;
+      --bg-dark: #09111e;
+      --card-bg: rgba(15, 25, 42, 0.92);
+      --gold-light: #f6e08b;
+      --gold-main: #d4af37;
+      --gold-dark: #997a15;
+      --text-main: #ffffff;
       --text-muted: #94a3b8;
-      --input-bg: #1e293b;
+      --input-bg: rgba(11, 18, 32, 0.85);
+      --danger: #ef4444;
+      --whatsapp: #22c55e;
+      --call: #3b82f6;
     }
 
     * {
       box-sizing: border-box;
-      font-family: 'Tajawal', sans-serif;
       margin: 0;
       padding: 0;
+      font-family: 'Cairo', sans-serif;
     }
 
     body {
-      background: radial-gradient(circle at top, #172038 0%, var(--bg-dark) 75%);
       min-height: 100vh;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.16) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
+        linear-gradient(180deg, #0b1424 0%, #070d17 100%);
+      color: var(--text-main);
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 20px;
-      color: var(--text-main);
+      justify-content: center;
+      padding: 20px 14px;
+      position: relative;
+      overflow-x: hidden;
     }
 
-    .card {
-      background: var(--card-bg);
+    /* خلفية شبكية سداسية خفيفة */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
       width: 100%;
       max-width: 420px;
-      border-radius: 24px;
-      padding: 28px 24px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* البطاقة الرئيسية بإطار ذهبي أنيق */
+    .main-card {
+      background: var(--card-bg);
+      border: 1.5px solid rgba(212, 175, 55, 0.55);
+      border-radius: 26px;
+      padding: 26px 20px 22px;
+      box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(246, 224, 139, 0.25);
+      backdrop-filter: blur(12px);
       text-align: center;
       position: relative;
-      overflow: hidden;
+      margin-top: 28px;
     }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--primary), var(--accent), var(--whatsapp));
-    }
-
-    .logo-circle {
-      width: 64px;
-      height: 64px;
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 20px;
+    /* شعار الدرع الذهبي في الأعلى */
+    .logo-wrapper {
+      margin-top: -64px;
+      margin-bottom: 6px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      margin: 0 auto 14px;
-      font-size: 30px;
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
     }
 
-    .badge {
+    .shield-svg {
+      width: 92px;
+      height: 92px;
+      filter: drop-shadow(0 8px 18px rgba(212, 175, 55, 0.35));
+    }
+
+    .brand-en {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      margin-top: 4px;
+      background: linear-gradient(180deg, #f6e08b 0%, #d4af37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-en span {
+      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-ar {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #f6e08b 10%, #c59b27 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+      letter-spacing: 0.3px;
+    }
+
+    /* شارة كود الاستيكر الذهبية */
+    .id-badge {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      background: rgba(245, 158, 11, 0.12);
-      color: var(--accent);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      padding: 5px 14px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 13px;
-      margin-bottom: 16px;
-      letter-spacing: 0.5px;
-    }
-
-    h2 {
-      font-size: 23px;
+      background: linear-gradient(90deg, #b88d1e 0%, #f3d778 50%, #b88d1e 100%);
+      color: #0b1320;
       font-weight: 800;
-      margin-bottom: 8px;
-      color: #fff;
-    }
-
-    p {
-      color: var(--text-muted);
       font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 22px;
+      padding: 6px 22px;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+      margin-bottom: 16px;
     }
 
+    .section-title {
+      font-size: 20px;
+      font-weight: 800;
+      background: linear-gradient(180deg, #f6e08b 0%, #d4af37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      padding: 0 6px;
+    }
+
+    /* حقول الإدخال العصرية */
     .input-group {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       text-align: right;
     }
 
-    input {
+    .input-field {
       width: 100%;
-      padding: 14px 16px;
       background: var(--input-bg);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(212, 175, 55, 0.45);
       border-radius: 14px;
-      font-size: 15px;
-      color: #fff;
+      padding: 13px 16px 13px 44px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
       outline: none;
       transition: all 0.25s ease;
     }
 
-    input::placeholder {
-      color: #64748b;
+    .input-field::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
     }
 
-    input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
+    .input-field:focus {
+      border-color: var(--gold-light);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+      background: rgba(15, 25, 45, 0.98);
     }
 
-    .toggle-pin {
+    .input-icon {
       position: absolute;
       left: 14px;
       top: 50%;
       transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-muted);
+      width: 20px;
+      height: 20px;
+      color: var(--gold-light);
       cursor: pointer;
-      font-size: 16px;
-    }
-
-    .btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 14px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      margin-bottom: 12px;
-      transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s;
+      opacity: 0.9;
     }
 
-    .btn:active {
-      transform: scale(0.98);
-    }
-
+    /* الزر الرئيسي المتدرج (ذهبي إلى أزرق ملكي) */
     .btn-primary {
-      background: linear-gradient(135deg, #2563eb, #3b82f6);
-      color: #fff;
-      box-shadow: 0 8px 20px var(--primary-glow);
+      width: 100%;
+      margin-top: 6px;
+      padding: 14px 20px;
+      border: 1px solid rgba(246, 224, 139, 0.6);
+      border-radius: 14px;
+      background: linear-gradient(90deg, #d4af37 0%, #8ea468 48%, #2563eb 100%);
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.25), 0 4px 12px rgba(212, 175, 55, 0.25);
+      transition: transform 0.2s ease, filter 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.45);
     }
 
-    .btn-call {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    .btn-primary:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
     }
 
-    .btn-wa {
-      background: linear-gradient(135deg, #16a34a, #22c55e);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .btn-location {
-      background: linear-gradient(135deg, #be123c, #e11d48);
-      color: #fff;
-      box-shadow: 0 8px 20px rgba(225, 29, 72, 0.3);
-    }
-
-    .btn-outline {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-muted);
-      font-size: 13px;
-      padding: 11px;
-      margin-top: 8px;
-      margin-bottom: 0;
-    }
-
-    .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-    }
-
-    .info-box {
-      background: rgba(15, 23, 42, 0.7);
-      padding: 18px;
+    /* شاشة عرض بيانات المالك لمن يمسح الكود */
+    .owner-box {
+      background: rgba(10, 17, 30, 0.8);
+      border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 16px;
-      margin-bottom: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 16px;
+      margin-bottom: 16px;
     }
 
     .owner-label {
       font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+      color: var(--gold-light);
+      margin-bottom: 2px;
     }
 
     .owner-name {
       font-size: 22px;
       font-weight: 800;
-      color: #fff;
+      color: #ffffff;
       margin-bottom: 8px;
     }
 
-    .item-note {
-      background: rgba(59, 130, 246, 0.12);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      color: #93c5fd;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      line-height: 1.5;
+    .emergency-note {
+      background: rgba(212, 175, 55, 0.12);
+      border-right: 3px solid var(--gold-main);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      color: #f8fafc;
+      text-align: right;
+      line-height: 1.55;
+      margin-top: 8px;
     }
 
-    .phone-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.06);
-      padding: 6px 14px;
-      border-radius: 10px;
+    .action-btn {
+      width: 100%;
+      padding: 13px 16px;
+      border: none;
+      border-radius: 13px;
+      color: #fff;
       font-size: 15px;
-      color: #e2e8f0;
-      direction: ltr;
+      font-weight: 700;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      margin-bottom: 10px;
+      transition: transform 0.15s ease, opacity 0.2s;
     }
 
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-call {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-wa {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+    }
+
+    .btn-gps {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+    }
+
+    .btn-edit-link {
+      background: transparent;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--gold-light);
+      font-size: 13px;
+      padding: 9px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 6px;
+      width: 100%;
+    }
+
+    .footer-text {
+      margin-top: 16px;
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* شاشة التحميل */
     .loader {
-      border: 3px solid rgba(255, 255, 255, 0.1);
-      border-top: 3px solid var(--primary);
+      width: 38px;
+      height: 38px;
+      border: 3px solid rgba(212, 175, 55, 0.2);
+      border-top-color: var(--gold-main);
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 0.9s linear infinite;
+      animation: spin 0.8s linear infinite;
       margin: 24px auto;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .hidden { display: none !important; }
-
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      z-index: 100;
-    }
-
-    .modal-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      width: 100%;
-      max-width: 340px;
-      text-align: center;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1e293b;
-      color: #fff;
-      padding: 12px 22px;
-      border-radius: 50px;
-      font-size: 14px;
-      font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      transition: transform 0.3s ease;
-      z-index: 200;
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .footer {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #475569;
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <div class="logo-circle">🛡️</div>
-  <div id="codeBadge" class="badge">كود الاستيكر: ---</div>
+  <div class="container">
+    <div class="main-card">
+      
+      <!-- لوجو الدرع الذهبي الجديد -->
+      <div class="logo-wrapper">
+        <svg class="shield-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="goldGrad" x1="15" y1="10" x2="105" y2="110" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#F6E08B"/>
+              <stop offset="50%" stop-color="#D4AF37"/>
+              <stop offset="100%" stop-color="#997A15"/>
+            </linearGradient>
+          </defs>
+          <!-- خطوط الدوائر الإلكترونية المحيطة -->
+          <path d="M24 58H12M96 58H108M66 22L76 10M82 88L94 88" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="10" cy="58" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
+          <circle cx="110" cy="58" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
+          <circle cx="78" cy="8" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
+          <circle cx="96" cy="88" r="3.5" fill="url(#goldGrad)"/>
+          <rect x="86" y="24" width="12" height="12" rx="2" stroke="url(#goldGrad)" stroke-width="2.5"/>
+          <rect x="26" y="84" width="12" height="12" rx="2" stroke="url(#goldGrad)" stroke-width="2.5"/>
+          
+          <!-- جسم الدرع -->
+          <path d="M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z" fill="url(#goldGrad)" stroke="#09111e" stroke-width="2"/>
+          <path d="M60 22L88 33V58C88 78 75.5 94.5 60 101C44.5 94.5 32 78 32 58V33L60 22Z" fill="#0d1726" fill-opacity="0.18"/>
+          
+          <!-- زوايا المسح الضوئي وحرف T -->
+          <path d="M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69" stroke="#09111e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z" fill="#09111e"/>
+        </svg>
 
-  <!-- شاشة التحميل -->
-  <div id="loadingView">
-    <div class="loader"></div>
-    <p>جاري التحقق من بيانات الاستيكر...</p>
-  </div>
+        <div class="brand-en">QR-<span>Tago</span></div>
+        <div class="brand-ar">كيوآر تاجو</div>
+        <div class="brand-sub">درع الحماية الذكي</div>
+      </div>
 
-  <!-- شاشة عدم وجود كود في الرابط -->
-  <div id="noIdView" class="hidden">
-    <h2>نظام الحماية والتواصل الذكي</h2>
-    <p>يرجى مسح كود الـ QR المطبوع على الاستيكر بكاميرا هاتفك للوصول لبيانات المالك أو تفعيل الاستيكر الجديد.</p>
-  </div>
+      <!-- شارة رقم الكود -->
+      <div class="id-badge">
+        <span>كود الاستيكر:</span>
+        <span id="display-id">---</span>
+      </div>
 
-  <!-- شاشة تسجيل وتفعيل الاستيكر الجديد -->
-  <div id="registerView" class="hidden">
-    <h2 id="regTitle">تفعيل الاستيكر لأول مرة</h2>
-    <p>هذا الاستيكر جاهز للتفعيل. أدخل بياناتك لربط الكود برقمك فوراً:</p>
-    <form id="regForm">
-      <div class="input-group">
-        <input type="text" id="ownerName" placeholder="اسم المالك (أو اللقب)" required>
+      <!-- 1. شاشة التحميل -->
+      <div id="loading-view">
+        <div class="loader"></div>
+        <p class="section-desc">جاري التحقق من حالة الاستيكر...</p>
       </div>
-      <div class="input-group">
-        <input type="tel" id="ownerPhone" placeholder="رقم الهاتف / الواتساب (010xxxxxxxx)" required>
-      </div>
-      <div class="input-group">
-        <input type="text" id="ownerNote" placeholder="وصف الغرض أو رسالة طوارئ (اختياري)">
-      </div>
-      <div class="input-group">
-        <input type="password" id="ownerPin" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً" required>
-        <button type="button" class="toggle-pin" onclick="togglePinVisibility()">👁️</button>
-      </div>
-      <button type="submit" class="btn btn-primary" id="submitBtn">✨ حفظ وتفعيل الاستيكر</button>
-    </form>
-  </div>
 
-  <!-- شاشة عرض بيانات المالك عند المسح -->
-  <div id="ownerView" class="hidden">
-    <h2>بيانات المالك</h2>
-    <p>في حال العثور على هذا الغرض أو لأي طارئ، يمكنك التواصل مع المالك أو إرسال موقعك الحالي له فوراً:</p>
-    <div class="info-box">
-      <div class="owner-label">المالك المسجل</div>
-      <div class="owner-name" id="displayOwner">---</div>
-      <div id="displayNote" class="item-note hidden">---</div>
-      <div class="phone-pill" onclick="copyPhone()" title="اضغط لنسخ الرقم">
-        <span id="displayPhone">---</span>
-        <span>📋</span>
+      <!-- 2. شاشة التفعيل لأول مرة أو التعديل -->
+      <div id="register-view" class="hidden">
+        <h2 class="section-title" id="form-title">تفعيل الاستيكر لأول مرة</h2>
+        <p class="section-desc" id="form-desc">هذا الاستيكر جاهز للتفعيل. أدخل بياناتك لربط الكود برقمك فوراً.</p>
+
+        <form id="activation-form">
+          <div class="input-group">
+            <input type="text" id="owner-name" class="input-field" placeholder="اسم المالك (أو اللقب)" required>
+            <span class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+          </div>
+
+          <div class="input-group">
+            <input type="tel" id="owner-phone" class="input-field" placeholder="رقم الهاتف / الواتساب (010xxxxxxxx)" required>
+            <span class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </span>
+          </div>
+
+          <div class="input-group">
+            <input type="text" id="item-note" class="input-field" placeholder="وصف الغرض أو رسالة طوارئ (اختياري)">
+            <span class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </span>
+          </div>
+
+          <div class="input-group">
+            <input type="password" id="owner-pin" class="input-field" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً" required>
+            <span class="input-icon" onclick="togglePinVisibility()" title="إظهار / إخفاء الرقم السري">
+              <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <span>✨ حفظ وتفعيل الاستيكر</span>
+          </button>
+        </form>
       </div>
+
+      <!-- 3. شاشة عرض بيانات المالك عند مسح الكود -->
+      <div id="owner-view" class="hidden">
+        <div class="owner-box">
+          <div class="owner-label">هذا الغرض مسجل باسم</div>
+          <div class="owner-name" id="view-name">---</div>
+          <div id="view-note-box" class="emergency-note hidden"></div>
+        </div>
+
+        <a id="call-btn" href="#" class="action-btn btn-call">
+          <span>📞 اتصال هاتفي مباشر</span>
+        </a>
+
+        <a id="wa-btn" href="#" target="_blank" class="action-btn btn-wa">
+          <span>💬 مراسلة عبر واتساب</span>
+        </a>
+
+        <button id="gps-btn" onclick="sendLocation()" class="action-btn btn-gps">
+          <span>📍 إرسال موقعي الحالي للمالك (GPS)</span>
+        </button>
+
+        <button onclick="requestEdit()" class="btn-edit-link">
+          ✏️ تعديل البيانات (للمالك فقط)
+        </button>
+      </div>
+
     </div>
-    <button id="locBtn" onclick="sendLocationViaWhatsApp()" class="btn btn-location">📍 إرسال موقعي الحالي للمالك (GPS)</button>
-    <a id="callBtn" href="#" class="btn btn-call">📞 اتصال هاتفي مباشر</a>
-    <a id="waBtn" href="#" target="_blank" class="btn btn-wa">💬 مراسلة عبر واتساب</a>
-    <button onclick="openPinModal()" class="btn btn-outline">⚙️ تعديل البيانات (للمالك فقط)</button>
+
+    <div class="footer-text">نظام الاستيكر الذكي • حماية وتواصل سريع</div>
   </div>
-</div>
 
-<div class="footer">نظام الاستيكر الذكي • حماية وتواصل سريع</div>
+  <script>
+    // إعدادات الربط مع Google Forms & Google Sheets
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2V04m-h1fJ-iY7uC2Q_fF7xO7tH0qL7sI1b8kX5wR9cM2nN4vB6zX8yP0aS3dF5gH7jK9lZ1xC3vB/pub?output=csv";
+    const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
 
-<!-- نافذة التحقق من الرقم السري -->
-<div id="pinModal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <h2 style="font-size:19px;">تأكيد هوية المالك</h2>
-    <p style="margin-bottom:14px;">أدخل الرقم السري (PIN) الخاص بهذا الاستيكر:</p>
-    <input type="password" id="verifyPinInput" placeholder="الرقم السري" style="text-align:center; letter-spacing:3px;">
-    <div class="modal-actions">
-      <button onclick="verifyPin()" class="btn btn-primary" style="margin:0;">تأكيد</button>
-      <button onclick="closePinModal()" class="btn btn-outline" style="margin:0;">إلغاء</button>
-    </div>
-  </div>
-</div>
+    const ENTRY_ID    = "entry.566025065";
+    const ENTRY_NAME  = "entry.675203836";
+    const ENTRY_PHONE = "entry.1411822485";
+    const ENTRY_PIN   = "entry.787112400";
+    const ENTRY_NOTE  = "entry.1223610661";
 
-<!-- إشعار منبثق -->
-<div id="toast" class="toast"></div>
+    // استخراج رقم الكود من الرابط (?id=1001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const stickerId = (urlParams.get('id') || '1001').trim();
+    document.getElementById('display-id').textContent = stickerId;
 
-<script>
-  const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
-  const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
+    let currentRecord = null;
 
-  const params = new URLSearchParams(window.location.search);
-  const stickerId = (params.get('id') || '').trim();
-  let currentRecord = null;
-  let cleanWhatsAppPhone = '';
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
-  }
-
-  function showView(viewId) {
-    ['loadingView', 'noIdView', 'registerView', 'ownerView'].forEach(id => {
-      document.getElementById(id).classList.add('hidden');
-    });
-    document.getElementById(viewId).classList.remove('hidden');
-  }
-
-  function togglePinVisibility() {
-    const pinInput = document.getElementById('ownerPin');
-    pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
-  }
-
-  function copyPhone() {
-    if (!currentRecord || !currentRecord.phone) return;
-    navigator.clipboard.writeText(currentRecord.phone);
-    showToast("✅ تم نسخ رقم الهاتف");
-  }
-
-  function sendLocationViaWhatsApp() {
-    if (!navigator.geolocation) {
-      showToast("⚠️ متصفحك لا يدعم تحديد الموقع، استخدم زر الواتساب");
-      return;
+    // إظهار / إخفاء الرقم السري
+    function togglePinVisibility() {
+      const pinInput = document.getElementById('owner-pin');
+      pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
     }
 
-    const btn = document.getElementById('locBtn');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = "📡 جاري التقاط موقعك بدقة...";
+    // قراءة البيانات من الشيت
+    async function fetchStickerData() {
+      try {
+        // رابط الشيت المنشور الخاص بك (تأكد من استبداله برابط CSV الخاص بشيتك إذا تغير)
+        const response = await fetch("https://docs.google.com/spreadsheets/d/1yN4x_q7kL0mZ9wR8vT6pB5nC3xV2zQ1wE4rT6yU8iO0/gviz/tq?tqx=out:csv&cache=" + Date.now());
+        if (!response.ok) throw new Error("Network error");
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
 
-    navigator.geolocation.getCurrentPosition(
-      function(position) {
-        btn.disabled = false;
-        btn.textContent = originalText;
-
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-        const msg = encodeURIComponent(
-          `مرحباً، لقد وجدت الغرض الخاص بك الذي يحمل استيكر رقم (${currentRecord.id}).\n` +
-          `هذا هو موقعي الحالي على الخريطة للتسليم:\n${mapsUrl}`
-        );
-
-        window.open(`https://wa.me/${cleanWhatsAppPhone}?text=${msg}`, '_blank');
-      },
-      function(error) {
-        btn.disabled = false;
-        btn.textContent = originalText;
-        showToast("⚠️ يرجى تفعيل الـ GPS والموافقة على إذن الموقع");
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }
-
-  function parseCSV(text) {
-    const rows = [];
-    let row = [], cell = '', inQuotes = false;
-    for (let i = 0; i < text.length; i++) {
-      const c = text[i], next = text[i+1];
-      if (c === '"' && inQuotes && next === '"') { cell += '"'; i++; }
-      else if (c === '"') { inQuotes = !inQuotes; }
-      else if (c === ',' && !inQuotes) { row.push(cell.trim()); cell = ''; }
-      else if ((c === '\n' || (c === '\r' && next === '\n')) && !inQuotes) {
-        if (c === '\r') i++;
-        row.push(cell.trim());
-        rows.push(row);
-        row = []; cell = '';
-      } else { cell += c; }
-    }
-    if (cell || row.length) { row.push(cell.trim()); rows.push(row); }
-    return rows;
-  }
-
-  async function init() {
-    if (!stickerId) {
-      showView('noIdView');
-      return;
-    }
-    document.getElementById('codeBadge').textContent = "كود الاستيكر: " + stickerId;
-
-    try {
-      const res = await fetch(SHEET_CSV_URL + "&t=" + Date.now());
-      const csvText = await res.text();
-      const rows = parseCSV(csvText);
-
-      for (let i = rows.length - 1; i >= 1; i--) {
-        if (rows[i][1] && rows[i][1].toLowerCase() === stickerId.toLowerCase()) {
-          currentRecord = {
-            id: rows[i][1],
-            name: rows[i][2] || 'المالك',
-            phone: rows[i][3] || '',
-            pin: rows[i][4] || '',
-            note: rows[i][5] || ''
-          };
-          break;
+        // البحث عن أحدث صف مطابق لـ stickerId في العمود الثاني (index 1)
+        for (let i = rows.length - 1; i >= 1; i--) {
+          if (rows[i][1] && rows[i][1].trim() === stickerId) {
+            currentRecord = {
+              id: rows[i][1].trim(),
+              name: rows[i][2] ? rows[i][2].trim() : "",
+              phone: rows[i][3] ? rows[i][3].trim() : "",
+              pin: rows[i][4] ? rows[i][4].trim() : "",
+              note: rows[i][5] ? rows[i][5].trim() : ""
+            };
+            break;
+          }
         }
+      } catch (err) {
+        console.warn("لم يتم العثور على بيانات سابقة أو تعذر الاتصال:", err);
       }
 
-      if (currentRecord && currentRecord.phone) {
-        renderOwnerView(currentRecord);
+      document.getElementById('loading-view').classList.add('hidden');
+
+      if (currentRecord && currentRecord.name) {
+        showOwnerView(currentRecord);
       } else {
-        showView('registerView');
+        document.getElementById('register-view').classList.remove('hidden');
       }
-    } catch (err) {
-      showToast("⚠️ تعذر الاتصال، يرجى تحديث الصفحة");
-    }
-  }
-
-  function renderOwnerView(data) {
-    document.getElementById('displayOwner').textContent = data.name;
-    document.getElementById('displayPhone').textContent = data.phone;
-
-    const noteEl = document.getElementById('displayNote');
-    if (data.note && data.note.trim() !== '') {
-      noteEl.textContent = "📌 " + data.note;
-      noteEl.classList.remove('hidden');
-    } else {
-      noteEl.classList.add('hidden');
     }
 
-    cleanWhatsAppPhone = data.phone.replace(/\D/g, '');
-    if (cleanWhatsAppPhone.startsWith('01')) cleanWhatsAppPhone = '2' + cleanWhatsAppPhone;
-
-    document.getElementById('callBtn').href = "tel:" + data.phone;
-    const waMsg = encodeURIComponent("مرحباً، قمت بمسح كود الاستيكر رقم (" + data.id + ") الخاص بك.");
-    document.getElementById('waBtn').href = "https://wa.me/" + cleanWhatsAppPhone + "?text=" + waMsg;
-
-    showView('ownerView');
-  }
-
-  function openPinModal() {
-    document.getElementById('verifyPinInput').value = '';
-    document.getElementById('pinModal').classList.remove('hidden');
-    document.getElementById('verifyPinInput').focus();
-  }
-
-  function closePinModal() {
-    document.getElementById('pinModal').classList.add('hidden');
-  }
-
-  function verifyPin() {
-    const enteredPin = document.getElementById('verifyPinInput').value.trim();
-    if (enteredPin === currentRecord.pin.trim()) {
-      closePinModal();
-      document.getElementById('regTitle').textContent = "تعديل بيانات الاستيكر";
-      document.getElementById('ownerName').value = currentRecord.name;
-      document.getElementById('ownerPhone').value = currentRecord.phone;
-      document.getElementById('ownerNote').value = currentRecord.note || '';
-      document.getElementById('ownerPin').value = currentRecord.pin;
-      showView('registerView');
-    } else {
-      showToast("❌ الرقم السري غير صحيح");
+    // تحليل CSV بدقة
+    function parseCSV(str) {
+      const arr = [];
+      let quote = false;
+      for (let row = 0, col = 0, c = 0; c < str.length; c++) {
+        let cc = str[c], nc = str[c + 1];
+        arr[row] = arr[row] || [];
+        arr[row][col] = arr[row][col] || '';
+        if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
+        if (cc == '"') { quote = !quote; continue; }
+        if (cc == ',' && !quote) { ++col; continue; }
+        if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
+        if (cc == '\n' && !quote) { ++row; col = 0; continue; }
+        if (cc == '\r' && !quote) { ++row; col = 0; continue; }
+        arr[row][col] += cc;
+      }
+      return arr;
     }
-  }
 
-  document.getElementById('regForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.textContent = "⏳ جاري الحفظ والتفعيل...";
+    // عرض صفحة المالك
+    function showOwnerView(data) {
+      document.getElementById('register-view').classList.add('hidden');
+      document.getElementById('owner-view').classList.remove('hidden');
 
-    const name = document.getElementById('ownerName').value.trim();
-    const phone = document.getElementById('ownerPhone').value.trim();
-    const note = document.getElementById('ownerNote').value.trim();
-    const pin = document.getElementById('ownerPin').value.trim();
+      document.getElementById('view-name').textContent = data.name;
 
-    const formData = new URLSearchParams();
-    formData.append('entry.566025065', stickerId);
-    formData.append('entry.675203836', name);
-    formData.append('entry.1411822485', phone);
-    formData.append('entry.787112400', pin);
-    formData.append('entry.1223610661', note);
+      const noteBox = document.getElementById('view-note-box');
+      if (data.note) {
+        noteBox.textContent = data.note;
+        noteBox.classList.remove('hidden');
+      } else {
+        noteBox.classList.add('hidden');
+      }
 
-    try {
-      await fetch(FORM_ACTION_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formData.toString()
-      });
+      // تنسيق رقم الهاتف للاتصال والواتساب
+      let cleanPhone = data.phone.replace(/\D/g, '');
+      if (cleanPhone.startsWith('01')) {
+        cleanPhone = '2' + cleanPhone; // إضافة كود مصر للواتساب
+      }
 
-      currentRecord = { id: stickerId, name, phone, pin, note };
-      showToast("✅ تم حفظ وتفعيل الاستيكر بنجاح!");
-      renderOwnerView(currentRecord);
-    } catch (err) {
-      showToast("⚠️ تعذر الإرسال، تحقق من الإنترنت");
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "✨ حفظ وتفعيل الاستيكر";
+      document.getElementById('call-btn').href = "tel:" + data.phone;
+      const waMsg = encodeURIComponent(`مرحباً ${data.name}، قمت بمسح كود الحماية الذكي QR-Tago الخاص بك (كود رقم ${stickerId}).`);
+      document.getElementById('wa-btn').href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
     }
-  });
 
-  init();
-</script>
+    // إرسال الموقع عبر GPS وواتساب
+    function sendLocation() {
+      if (!currentRecord) return;
+      const btn = document.getElementById('gps-btn');
+      btn.innerHTML = "<span>⏳ جاري تحديد موقعك بدقة...</span>";
 
+      if (!navigator.geolocation) {
+        alert("متصفحك لا يدعم تحديد الموقع الجغرافي.");
+        btn.innerHTML = "<span>📍 إرسال موقعي الحالي للمالك (GPS)</span>";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+          let cleanPhone = currentRecord.phone.replace(/\D/g, '');
+          if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
+
+          const msg = encodeURIComponent(`مرحباً ${currentRecord.name}، وجدت الغرض الخاص بك (كود QR-Tago رقم ${stickerId})، وهذا موقعي الحالي على الخريطة:\n${mapsLink}`);
+          btn.innerHTML = "<span>📍 إرسال موقعي الحالي للمالك (GPS)</span>";
+          window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
+        },
+        () => {
+          alert("يرجى تفعيل خدمة الموقع (GPS) في هاتفك والموافقة على الإذن لإرسال الموقع.");
+          btn.innerHTML = "<span>📍 إرسال موقعي الحالي للمالك (GPS)</span>";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    // طلب التعديل للمالك
+    function requestEdit() {
+      if (!currentRecord) return;
+      const enteredPin = prompt("أدخل الرقم السري (PIN) الخاص بهذا الاستيكر لتعديل البيانات:");
+      if (enteredPin === null) return;
+      if (enteredPin.trim() === currentRecord.pin) {
+        document.getElementById('owner-view').classList.add('hidden');
+        document.getElementById('register-view').classList.remove('hidden');
+        document.getElementById('form-title').textContent = "تعديل بيانات الاستيكر";
+        document.getElementById('form-desc').textContent = "عدّل بياناتك أو أضف رسالة طوارئ ثم اضغط حفظ.";
+        document.getElementById('owner-name').value = currentRecord.name;
+        document.getElementById('owner-phone').value = currentRecord.phone;
+        document.getElementById('item-note').value = currentRecord.note;
+        document.getElementById('owner-pin').value = currentRecord.pin;
+      } else {
+        alert("❌ الرقم السري غير صحيح!");
+      }
+    }
+
+    // إرسال البيانات إلى Google Form
+    document.getElementById('activation-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.innerHTML = "<span>⏳ جاري الحفظ والتفعيل...</span>";
+
+      const nameVal  = document.getElementById('owner-name').value.trim();
+      const phoneVal = document.getElementById('owner-phone').value.trim();
+      const noteVal  = document.getElementById('item-note').value.trim();
+      const pinVal   = document.getElementById('owner-pin').value.trim();
+
+      const formData = new FormData();
+      formData.append(ENTRY_ID, stickerId);
+      formData.append(ENTRY_NAME, nameVal);
+      formData.append(ENTRY_PHONE, phoneVal);
+      formData.append(ENTRY_PIN, pinVal);
+      formData.append(ENTRY_NOTE, noteVal);
+
+      try {
+        await fetch(FORM_ACTION_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData
+        });
+
+        currentRecord = { id: stickerId, name: nameVal, phone: phoneVal, pin: pinVal, note: noteVal };
+        alert("✅ تم حفظ وتفعيل الاستيكر بنجاح!");
+        showOwnerView(currentRecord);
+      } catch (error) {
+        alert("حدث خطأ أثناء الاتصال، تأكد من الإنترنت وحاول مرة أخرى.");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "<span>✨ حفظ وتفعيل الاستيكر</span>";
+      }
+    });
+
+    // بدء التشغيل
+    fetchStickerData();
+  </script>
 </body>
 </html>
