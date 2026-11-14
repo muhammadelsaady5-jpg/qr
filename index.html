@@ -226,6 +226,18 @@
       margin-bottom: 8px;
     }
 
+    .item-note {
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      color: #93c5fd;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
     .phone-pill {
       display: inline-flex;
       align-items: center;
@@ -342,6 +354,9 @@
         <input type="tel" id="ownerPhone" placeholder="رقم الهاتف / الواتساب (010xxxxxxxx)" required>
       </div>
       <div class="input-group">
+        <input type="text" id="ownerNote" placeholder="وصف الغرض أو رسالة طوارئ (اختياري)">
+      </div>
+      <div class="input-group">
         <input type="password" id="ownerPin" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً" required>
         <button type="button" class="toggle-pin" onclick="togglePinVisibility()">👁️</button>
       </div>
@@ -356,6 +371,7 @@
     <div class="info-box">
       <div class="owner-label">المالك المسجل</div>
       <div class="owner-name" id="displayOwner">---</div>
+      <div id="displayNote" class="item-note hidden">---</div>
       <div class="phone-pill" onclick="copyPhone()" title="اضغط لنسخ الرقم">
         <span id="displayPhone">---</span>
         <span>📋</span>
@@ -492,7 +508,8 @@
             id: rows[i][1],
             name: rows[i][2] || 'المالك',
             phone: rows[i][3] || '',
-            pin: rows[i][4] || ''
+            pin: rows[i][4] || '',
+            note: rows[i][5] || ''
           };
           break;
         }
@@ -511,6 +528,14 @@
   function renderOwnerView(data) {
     document.getElementById('displayOwner').textContent = data.name;
     document.getElementById('displayPhone').textContent = data.phone;
+
+    const noteEl = document.getElementById('displayNote');
+    if (data.note && data.note.trim() !== '') {
+      noteEl.textContent = "📌 " + data.note;
+      noteEl.classList.remove('hidden');
+    } else {
+      noteEl.classList.add('hidden');
+    }
 
     cleanWhatsAppPhone = data.phone.replace(/\D/g, '');
     if (cleanWhatsAppPhone.startsWith('01')) cleanWhatsAppPhone = '2' + cleanWhatsAppPhone;
@@ -539,6 +564,7 @@
       document.getElementById('regTitle').textContent = "تعديل بيانات الاستيكر";
       document.getElementById('ownerName').value = currentRecord.name;
       document.getElementById('ownerPhone').value = currentRecord.phone;
+      document.getElementById('ownerNote').value = currentRecord.note || '';
       document.getElementById('ownerPin').value = currentRecord.pin;
       showView('registerView');
     } else {
@@ -554,6 +580,7 @@
 
     const name = document.getElementById('ownerName').value.trim();
     const phone = document.getElementById('ownerPhone').value.trim();
+    const note = document.getElementById('ownerNote').value.trim();
     const pin = document.getElementById('ownerPin').value.trim();
 
     const formData = new URLSearchParams();
@@ -561,6 +588,7 @@
     formData.append('entry.675203836', name);
     formData.append('entry.1411822485', phone);
     formData.append('entry.787112400', pin);
+    formData.append('entry.1223610661', note);
 
     try {
       await fetch(FORM_ACTION_URL, {
@@ -570,7 +598,7 @@
         body: formData.toString()
       });
 
-      currentRecord = { id: stickerId, name, phone, pin };
+      currentRecord = { id: stickerId, name, phone, pin, note };
       showToast("✅ تم حفظ وتفعيل الاستيكر بنجاح!");
       renderOwnerView(currentRecord);
     } catch (err) {
