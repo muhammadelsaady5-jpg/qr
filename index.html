@@ -3,1652 +3,722 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#09111e">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="QR-Tago">
-  <title>QR-Tago | درع الحماية الذكي</title>
-
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E">
-  <link id="pwa-manifest" rel="manifest" href="">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+  <title>QR-Tago | نظام استعادة المفقودات الذكي</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #09111e;
-      --card-bg: rgba(15, 25, 42, 0.94);
-      --gold-light: #f6e08b;
-      --gold-main: #d4af37;
-      --gold-dark: #997a15;
-      --text-main: #ffffff;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0b1120;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --input-bg: rgba(11, 18, 32, 0.88);
+      --border: #334155;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Cairo', 'Poppins', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
-    body {
-      min-height: 100vh;
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.16) 0%, transparent 55%),
-        radial-gradient(circle at 15% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 45%),
-        linear-gradient(180deg, #0b1424 0%, #070d17 100%);
-      color: var(--text-main);
+    /* الهيدر */
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 15px 20px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px 14px;
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image: radial-gradient(rgba(212, 175, 55, 0.12) 1px, transparent 1px);
-      background-size: 26px 26px;
-      opacity: 0.4;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 430px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .main-card {
-      background: var(--card-bg);
-      border: 1.5px solid rgba(212, 175, 55, 0.55);
-      border-radius: 26px;
-      padding: 26px 20px 22px;
-      box-shadow: 
-        0 20px 50px rgba(0, 0, 0, 0.65),
-        inset 0 1px 0 rgba(246, 224, 139, 0.25);
-      backdrop-filter: blur(12px);
-      text-align: center;
-      position: relative;
-      margin-top: 28px;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .main-card.lost-mode {
-      border-color: #ef4444;
-      box-shadow: 
-        0 20px 50px rgba(239, 68, 68, 0.28),
-        inset 0 1px 0 rgba(248, 113, 113, 0.35);
-    }
-
-    /* أزرار التحكم العلوية (اللغة + الصوت + التثبيت) */
-    .top-controls-left {
-      position: absolute;
-      top: 14px;
-      left: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      z-index: 5;
-    }
-
-    html[dir="ltr"] .top-controls-left {
-      left: auto;
-      right: 14px;
-    }
-
-    .top-pill-btn {
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid rgba(212, 175, 55, 0.45);
-      color: var(--gold-light);
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .top-pill-btn:hover {
-      background: rgba(212, 175, 55, 0.28);
-    }
-
-    .music-btn {
-      width: 30px;
-      height: 26px;
-      padding: 0;
-      font-size: 13px;
-    }
-
-    .music-btn.playing {
-      background: rgba(212, 175, 55, 0.32);
-      border-color: var(--gold-light);
-      box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
-    }
-
-    .install-top-btn {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      background: rgba(37, 99, 235, 0.22);
-      border: 1px solid rgba(96, 165, 250, 0.5);
-      color: #93c5fd;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 20px;
-      cursor: pointer;
-      z-index: 5;
-    }
-
-    html[dir="ltr"] .install-top-btn {
-      right: auto;
-      left: 14px;
-    }
-
-    .logo-wrapper {
-      margin-top: -64px;
-      margin-bottom: 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .shield-svg {
-      width: 90px;
-      height: 90px;
-      filter: drop-shadow(0 8px 18px rgba(212, 175, 55, 0.35));
-    }
-
-    .brand-en {
-      font-family: 'Poppins', sans-serif;
-      font-size: 27px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      line-height: 1.1;
-      margin-top: 4px;
-      background: linear-gradient(180deg, #f6e08b 0%, #d4af37 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .brand-en span {
-      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .brand-ar {
-      font-size: 23px;
-      font-weight: 900;
-      background: linear-gradient(180deg, #f6e08b 10%, #c59b27 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.25;
-    }
-
-    .brand-sub {
-      font-size: 13px;
-      font-weight: 600;
-      color: #cbd5e1;
-      margin-bottom: 12px;
-      letter-spacing: 0.3px;
-    }
-
-    .badges-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
-    .id-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      background: linear-gradient(90deg, #b88d1e 0%, #f3d778 50%, #b88d1e 100%);
-      color: #0b1320;
-      font-weight: 800;
-      font-size: 13.5px;
-      padding: 5px 18px;
-      border-radius: 50px;
-      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
-    }
-
-    .cat-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(59, 130, 246, 0.16);
-      border: 1px solid rgba(59, 130, 246, 0.45);
-      color: #93c5fd;
-      font-size: 12.5px;
-      font-weight: 700;
-      padding: 5px 14px;
-      border-radius: 50px;
-    }
-
-    .lost-alert-banner {
-      background: linear-gradient(90deg, #dc2626, #991b1b);
-      color: #fff;
-      font-weight: 800;
-      font-size: 13.5px;
-      padding: 9px 14px;
-      border-radius: 12px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.45);
-      animation: pulseAlert 1.8s infinite;
-    }
-
-    @keyframes pulseAlert {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.015); }
-    }
-
-    .section-title {
-      font-size: 19px;
-      font-weight: 800;
-      background: linear-gradient(180deg, #f6e08b 0%, #d4af37 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-    }
-
-    .section-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 16px;
-      padding: 0 4px;
-    }
-
-    .input-group {
-      position: relative;
-      margin-bottom: 11px;
-      text-align: right;
-    }
-
-    html[dir="ltr"] .input-group {
-      text-align: left;
-    }
-
-    .input-field, .select-field {
-      width: 100%;
-      background: var(--input-bg);
-      border: 1.5px solid rgba(212, 175, 55, 0.45);
-      border-radius: 14px;
-      padding: 12px 16px 12px 44px;
-      color: #ffffff;
-      font-size: 13.5px;
-      font-weight: 600;
-      outline: none;
-      transition: all 0.25s ease;
-    }
-
-    html[dir="ltr"] .input-field, html[dir="ltr"] .select-field {
-      padding: 12px 44px 12px 16px;
-    }
-
-    .select-field option {
-      background: #0f172a;
-      color: #ffffff;
-    }
-
-    .input-field::placeholder {
-      color: #94a3b8;
-      font-weight: 400;
-    }
-
-    .input-field:focus, .select-field:focus {
-      border-color: var(--gold-light);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
-      background: rgba(15, 25, 45, 0.98);
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 20px;
-      height: 20px;
-      color: var(--gold-light);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.9;
-    }
-
-    html[dir="ltr"] .input-icon {
-      left: auto;
-      right: 14px;
-    }
-
-    .options-box {
-      background: rgba(11, 18, 32, 0.7);
-      border: 1px solid rgba(212, 175, 55, 0.28);
-      border-radius: 14px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-      text-align: right;
-    }
-
-    html[dir="ltr"] .options-box {
-      text-align: left;
-    }
-
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      font-size: 13px;
-      color: #e2e8f0;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .checkbox-label input[type="checkbox"] {
-      width: 17px;
-      height: 17px;
-      accent-color: var(--gold-main);
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      width: 100%;
-      margin-top: 4px;
-      padding: 13px 20px;
-      border: 1px solid rgba(246, 224, 139, 0.6);
-      border-radius: 14px;
-      background: linear-gradient(90deg, #d4af37 0%, #8ea468 48%, #2563eb 100%);
-      color: #ffffff;
-      font-size: 15.5px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.25), 0 4px 12px rgba(212, 175, 55, 0.25);
-      transition: transform 0.2s ease, filter 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.45);
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.08);
-      transform: translateY(-1px);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    .owner-box {
-      background: rgba(10, 17, 30, 0.8);
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      border-radius: 16px;
-      padding: 15px;
-      margin-bottom: 14px;
-    }
-
-    .owner-label {
-      font-size: 12px;
-      color: var(--gold-light);
-      margin-bottom: 2px;
-    }
-
-    .owner-name {
-      font-size: 22px;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 6px;
-    }
-
-    .emergency-note {
-      background: rgba(212, 175, 55, 0.12);
-      border-right: 3px solid var(--gold-main);
-      padding: 10px 12px;
-      border-radius: 8px;
-      font-size: 13.5px;
-      color: #f8fafc;
-      text-align: right;
-      line-height: 1.55;
-      margin-top: 8px;
-    }
-
-    html[dir="ltr"] .emergency-note {
-      border-right: none;
-      border-left: 3px solid var(--gold-main);
-      text-align: left;
-    }
-
-    .sub-status-bar {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: rgba(9, 17, 30, 0.92);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 12px;
-      padding: 8px 12px;
-      margin-top: 10px;
-      font-size: 11.5px;
-      color: #cbd5e1;
-      gap: 8px;
-    }
-
-    .sub-date-info {
-      display: flex;
       align-items: center;
-      gap: 5px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-
-    .digital-counter {
-      font-family: 'Poppins', 'Cairo', sans-serif;
-      background: rgba(34, 197, 94, 0.14);
-      border: 1px solid rgba(34, 197, 94, 0.45);
-      color: #4ade80;
-      padding: 3px 10px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 11.5px;
-      white-space: nowrap;
-    }
-
-    .digital-counter.warning {
-      background: rgba(245, 158, 11, 0.15);
-      border-color: rgba(245, 158, 11, 0.5);
-      color: #fbbf24;
-    }
-
-    .digital-counter.expired {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.5);
-      color: #f87171;
-    }
-
-    .expired-banner {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.45);
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 14px;
-      font-size: 13px;
-      color: #fca5a5;
-      line-height: 1.5;
-    }
-
-    .qr-share-box {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px dashed rgba(212, 175, 55, 0.45);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 14px;
-      text-align: center;
-    }
-
-    .qr-share-box img {
-      width: 125px;
-      height: 125px;
-      border-radius: 10px;
-      background: #fff;
-      padding: 6px;
-      margin: 6px auto;
-      display: block;
-    }
-
-    .link-pill {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(9, 17, 30, 0.9);
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 11px;
-      color: var(--gold-light);
-      direction: ltr;
-      margin-top: 6px;
-      gap: 6px;
-    }
-
-    .copy-mini-btn {
-      background: var(--gold-main);
-      color: #09111e;
-      border: none;
-      border-radius: 6px;
-      padding: 4px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .action-btn {
-      width: 100%;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 13px;
-      color: #fff;
-      font-size: 14.5px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      margin-bottom: 9px;
-      transition: transform 0.15s ease, opacity 0.2s;
-    }
-
-    .action-btn:active {
-      transform: scale(0.98);
-    }
-
-    .btn-call {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
-    }
-
-    .btn-wa {
-      background: linear-gradient(135deg, #16a34a, #15803d);
-      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
-    }
-
-    .btn-gps {
-      background: linear-gradient(135deg, #dc2626, #b91c1c);
-      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
-    }
-
-    .btn-vcard {
-      background: rgba(212, 175, 55, 0.16);
-      border: 1px solid rgba(212, 175, 55, 0.55);
-      color: var(--gold-light);
-    }
-
-    .btn-renew {
-      background: linear-gradient(135deg, #d4af37, #997a15);
-      color: #09111e;
-      font-weight: 800;
-      box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
-    }
-
-    .btn-edit-link {
+    .logo { font-size: 1.4rem; font-weight: 800; color: var(--primary); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .logo span { color: var(--text-main); }
+    nav { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nav-btn {
       background: transparent;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      color: var(--gold-light);
-      font-size: 13px;
-      padding: 9px 14px;
-      border-radius: 10px;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 14px;
+      border-radius: 8px;
       cursor: pointer;
-      margin-top: 4px;
-      width: 100%;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: 0.2s;
     }
+    .nav-btn:hover, .nav-btn.active { background: var(--primary); border-color: var(--primary); }
 
-    .admin-stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    /* الحاوية الرئيسية */
+    main { flex: 1; width: 100%; max-width: 720px; margin: 25px auto; padding: 0 15px; }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    h1, h2, h3 { margin-bottom: 12px; }
+    p.subtitle { color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem; }
+
+    /* الحقول والأزرار */
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--primary); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
       gap: 8px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-sm { width: auto; padding: 6px 14px; font-size: 0.85rem; }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* التنبيهات */
+    .alert {
+      padding: 12px 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: none;
+    }
+    .alert.show { display: block; }
+    .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #fca5a5; }
+    .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: #6ee7b7; }
+    .alert-info { background: rgba(59, 130, 246, 0.15); border: 1px solid var(--primary); color: #93c5fd; }
+
+    /* إخفاء الأقسام */
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    /* شارات الحالة */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .badge-active { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .badge-lost { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .badge-unread { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+    /* بطاقات الاستيكرات والرسائل في لوحة التحكم */
+    .item-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 15px;
       margin-bottom: 12px;
     }
+    .item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px; }
+    .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .checkbox-row input { width: auto; }
 
-    .stat-card {
-      background: rgba(9, 17, 30, 0.9);
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      border-radius: 12px;
-      padding: 10px 6px;
-    }
-
-    .stat-num {
-      font-family: 'Poppins', sans-serif;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--gold-light);
-    }
-
-    .stat-lbl {
-      font-size: 10.5px;
+    /* تبويبات لوحة التحكم */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+    .tab-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
       color: var(--text-muted);
-    }
-
-    .admin-list {
-      max-height: 330px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-      text-align: right;
-    }
-
-    .admin-item {
-      background: rgba(10, 17, 30, 0.85);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      border-radius: 12px;
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .admin-item-info {
-      font-size: 12px;
-      line-height: 1.45;
-    }
-
-    .admin-item-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .mini-wa-btn {
-      background: #16a34a;
-      color: #fff;
-      text-decoration: none;
-      font-size: 11px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
       font-weight: 700;
-      padding: 4px 9px;
-      border-radius: 7px;
-      text-align: center;
     }
+    .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .mini-view-btn {
-      background: rgba(212, 175, 55, 0.2);
-      color: var(--gold-light);
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      font-size: 11px;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 7px;
-      text-decoration: none;
-      text-align: center;
-    }
-
-    .footer-text {
-      margin-top: 16px;
-      font-size: 12px;
-      color: #64748b;
-      text-align: center;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .loader {
-      width: 36px;
-      height: 36px;
-      border: 3px solid rgba(212, 175, 55, 0.2);
-      border-top-color: var(--gold-main);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 18px auto;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 40px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <div class="main-card" id="main-card">
+<header>
+  <div class="logo" onclick="switchView('scanView')">QR-<span>Tago</span></div>
+  <nav id="mainNav">
+    <button class="nav-btn active" onclick="switchView('scanView')">فحص استيكر</button>
+    <button class="nav-btn" id="navLogin" onclick="switchView('loginView')">دخول العملاء</button>
+    <button class="nav-btn" id="navRegister" onclick="switchView('registerView')">حساب جديد</button>
+    <button class="nav-btn" id="navDashboard" style="display:none;" onclick="switchView('dashboardView')">لوحة التحكم</button>
+    <button class="nav-btn" id="navLogout" style="display:none; border-color: var(--danger); color: #fca5a5;" onclick="logout()">خروج</button>
+  </nav>
+</header>
+
+<main>
+  <div id="globalAlert" class="alert"></div>
+
+  <!-- 1. صفحة الشخص الذي يعثر على الغرض / فحص استيكر -->
+  <section id="scanView" class="view-section active">
+    <div class="card">
+      <h2>هل عثرت على غرض مفقود؟</h2>
+      <p class="subtitle">أدخل كود الاستيكر المطبوع أسفل رمز QR للتواصل الآمن مع المالك دون كشف بياناته الشخصية.</p>
       
-      <!-- زر تثبيت التطبيق (PWA) -->
-      <button type="button" class="install-top-btn hidden" id="install-app-btn" onclick="installPWA()">📲 تثبيت التطبيق</button>
-
-      <!-- أزرار الصوت واللغة -->
-      <div class="top-controls-left">
-        <button type="button" class="top-pill-btn music-btn" id="music-toggle-btn" onclick="toggleAmbientMusic()" title="تشغيل / إيقاف الموسيقى">🔇</button>
-        <button type="button" class="top-pill-btn" id="lang-btn" onclick="toggleLanguage()">English 🌐</button>
+      <div class="form-group">
+        <label>كود الاستيكر</label>
+        <input type="text" id="scanInput" placeholder="مثال: QR101" style="text-transform: uppercase;">
       </div>
-
-      <!-- اللوجو -->
-      <div class="logo-wrapper" onclick="handleLogoTap()" title="QR-Tago">
-        <svg class="shield-svg" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="goldGrad" x1="15" y1="10" x2="105" y2="110" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#F6E08B"/>
-              <stop offset="50%" stop-color="#D4AF37"/>
-              <stop offset="100%" stop-color="#997A15"/>
-            </linearGradient>
-          </defs>
-          <path d="M24 58H12M96 58H108M66 22L76 10M82 88L94 88" stroke="url(#goldGrad)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="10" cy="58" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
-          <circle cx="110" cy="58" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
-          <circle cx="78" cy="8" r="3.5" stroke="url(#goldGrad)" stroke-width="2.5"/>
-          <circle cx="96" cy="88" r="3.5" fill="url(#goldGrad)"/>
-          <rect x="86" y="24" width="12" height="12" rx="2" stroke="url(#goldGrad)" stroke-width="2.5"/>
-          <rect x="26" y="84" width="12" height="12" rx="2" stroke="url(#goldGrad)" stroke-width="2.5"/>
-          
-          <path d="M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z" fill="url(#goldGrad)" stroke="#09111e" stroke-width="2"/>
-          <path d="M60 22L88 33V58C88 78 75.5 94.5 60 101C44.5 94.5 32 78 32 58V33L60 22Z" fill="#0d1726" fill-opacity="0.18"/>
-          
-          <path d="M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69" stroke="#09111e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z" fill="#09111e"/>
-        </svg>
-
-        <div class="brand-en">QR-<span>Tago</span></div>
-        <div class="brand-ar" id="brand-ar-title">كيوآر تاجو</div>
-        <div class="brand-sub" data-i18n="brandSub">درع الحماية الذكي</div>
-      </div>
-
-      <div class="badges-row" id="badges-row">
-        <div class="id-badge">
-          <span data-i18n="stickerLabel">كود الاستيكر:</span>
-          <span id="display-id">1001</span>
-        </div>
-        <div class="cat-badge hidden" id="category-badge">🛡️ عام</div>
-      </div>
-
-      <div id="loading-view">
-        <div class="loader"></div>
-        <p class="section-desc" data-i18n="loadingText">جاري تجهيز كود الحماية...</p>
-      </div>
-
-      <!-- شاشة التفعيل والتعديل -->
-      <div id="register-view" class="hidden">
-        <h2 class="section-title" id="form-title" data-i18n="formTitle">تفعيل كود حماية جديد</h2>
-        <p class="section-desc" id="form-desc" data-i18n="formDesc">تفعيل فوري لمدة 365 يوماً. أدخل بياناتك لربط الكود برقمك الآن.</p>
-
-        <form id="activation-form">
-          <div class="input-group">
-            <select id="item-category" class="select-field">
-              <option value="general">🛡️ نوع الغرض: حماية عامة / مفاتيح</option>
-              <option value="car">🚗 سيارة / موتوسيكل</option>
-              <option value="phone">📱 موبايل / لابتوب</option>
-              <option value="bag">🎒 شنطة سفر / مدرسة</option>
-              <option value="kids">👶 طفل / كبار السن (طوارئ)</option>
-            </select>
-            <span class="input-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            </span>
-          </div>
-
-          <div class="input-group">
-            <input type="text" id="owner-name" class="input-field" data-i18n-ph="namePh" placeholder="اسم المالك (أو اللقب)" required>
-            <span class="input-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </span>
-          </div>
-
-          <div class="input-group">
-            <input type="tel" id="owner-phone" class="input-field" data-i18n-ph="phonePh" placeholder="رقم الهاتف / الواتساب (010xxxxxxxx)" required>
-            <span class="input-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            </span>
-          </div>
-
-          <div class="input-group">
-            <input type="text" id="item-note" class="input-field" data-i18n-ph="notePh" placeholder="وصف الغرض أو رسالة طوارئ (اختياري)">
-            <span class="input-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            </span>
-          </div>
-
-          <div class="input-group">
-            <input type="password" id="owner-pin" class="input-field" data-i18n-ph="pinPh" placeholder="اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً" required>
-            <span class="input-icon" onclick="togglePinVisibility()">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </span>
-          </div>
-
-          <div class="options-box">
-            <label class="checkbox-label">
-              <input type="checkbox" id="opt-lost">
-              <span data-i18n="optLost">🚨 تفعيل وضع "مفقود / توجد مكافأة"</span>
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" id="opt-private">
-              <span data-i18n="optPrivate">🔒 وضع الخصوصية (إخفاء زر الاتصال والاكتفاء بواتساب)</span>
-            </label>
-          </div>
-
-          <button type="submit" id="submit-btn" class="btn-primary">
-            <span data-i18n="saveBtn">✨ حفظ وتفعيل الاستيكر</span>
-          </button>
-        </form>
-      </div>
-
-      <!-- شاشة عرض المالك -->
-      <div id="owner-view" class="hidden">
-        
-        <div id="lost-banner" class="lost-alert-banner hidden" data-i18n="lostBannerText">
-          🚨 تنبيه: هذا الغرض مفقود! توجد مكافأة لمن يجده ويعيده.
-        </div>
-
-        <div class="owner-box">
-          <div class="owner-label" data-i18n="registeredTo">هذا الغرض مسجل باسم</div>
-          <div class="owner-name" id="view-name">---</div>
-          <div id="view-note-box" class="emergency-note hidden"></div>
-
-          <div class="sub-status-bar">
-            <div class="sub-date-info">
-              <span data-i18n="actDateLabel">📅 التفعيل:</span>
-              <strong id="reg-date-text">--/--/----</strong>
-            </div>
-            <div id="days-counter-badge" class="digital-counter">
-              ⏳ 365 يوم
-            </div>
-          </div>
-        </div>
-
-        <div id="expired-box" class="expired-banner hidden" data-i18n="expiredText">
-          ⚠️ انتهت مدة الاشتراك السنوي (365 يوماً) لهذا الاستيكر. يرجى تجديد الاشتراك لإعادة تفعيل أزرار التواصل.
-        </div>
-
-        <div id="qr-share-box" class="qr-share-box hidden">
-          <div style="font-size: 12px; color: var(--gold-light); font-weight: 700;" data-i18n="qrSaveHint">كود QR الخاص بك (اضغط مطولاً لحفظ الصورة)</div>
-          <img id="generated-qr-img" src="" alt="QR Code">
-          <div class="link-pill">
-            <span id="personal-link-text" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
-            <button type="button" class="copy-mini-btn" onclick="copyPersonalLink()" data-i18n="copyBtn">نسخ الرابط</button>
-          </div>
-        </div>
-
-        <div id="active-actions">
-          <a id="call-btn" href="#" class="action-btn btn-call">
-            <span data-i18n="callBtn">📞 اتصال هاتفي مباشر</span>
-          </a>
-
-          <a id="wa-btn" href="#" target="_blank" class="action-btn btn-wa">
-            <span data-i18n="waBtn">💬 مراسلة عبر واتساب</span>
-          </a>
-
-          <button id="gps-btn" onclick="sendLocation()" class="action-btn btn-gps">
-            <span data-i18n="gpsBtn">📍 إرسال موقعي الحالي للمالك (GPS)</span>
-          </button>
-
-          <button id="vcard-btn" onclick="downloadVCard()" class="action-btn btn-vcard">
-            <span data-i18n="vcardBtn">📇 حفظ جهة الاتصال في الهاتف</span>
-          </button>
-        </div>
-
-        <a id="renew-btn" href="#" target="_blank" class="action-btn btn-renew hidden">
-          <span data-i18n="renewBtn">🔄 تجديد الاشتراك السنوي الآن</span>
-        </a>
-
-        <button onclick="requestEdit()" class="btn-edit-link">
-          <span data-i18n="editBtn">✏️ تعديل البيانات (للمالك فقط)</span>
-        </button>
-      </div>
-
-      <!-- لوحة تحكم الإدارة السرية -->
-      <div id="admin-view" class="hidden">
-        <h2 class="section-title">👑 لوحة تحكم الإدارة</h2>
-        <p class="section-desc">متابعة جميع الاستيكرات المفعلة وتنبيهات التجديد السنوي</p>
-
-        <div class="admin-stats-grid">
-          <div class="stat-card">
-            <div class="stat-num" id="stat-total">0</div>
-            <div class="stat-lbl">إجمالي العملاء</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num" id="stat-active" style="color:#4ade80;">0</div>
-            <div class="stat-lbl">نشط حالياً</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-num" id="stat-expiring" style="color:#fbbf24;">0</div>
-            <div class="stat-lbl">قارب/منتهي</div>
-          </div>
-        </div>
-
-        <div class="input-group" style="margin-bottom:8px;">
-          <input type="text" id="admin-search" class="input-field" placeholder="ابحث بالاسم أو رقم الكود أو الهاتف..." oninput="renderAdminList()">
-          <span class="input-icon">🔍</span>
-        </div>
-
-        <div id="admin-records-list" class="admin-list"></div>
-
-        <button type="button" onclick="closeAdminPanel()" class="btn-edit-link" style="margin-top:12px;">
-          🔙 العودة لصفحة الاستيكر
-        </button>
-      </div>
-
+      <button class="btn btn-primary" id="btnLookup" onclick="handleLookup()">بحث عن الاستيكر</button>
     </div>
 
-    <div class="footer-text" data-i18n="footerText">نظام الاستيكر الذكي • حماية وتواصل سريع</div>
-  </div>
+    <!-- نتيجة البحث ونموذج إرسال رسالة للمالك -->
+    <div id="stickerResultCard" class="card" style="display:none;">
+      <div class="item-header">
+        <h3 id="resItemName">غرض مسجل في QR-Tago</h3>
+        <span id="resStatusBadge" class="badge badge-active">نشط</span>
+      </div>
+      <p class="subtitle">كود الاستيكر: <strong id="resStickerId" style="color:var(--primary)"></strong></p>
 
-  <script>
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9ICXFvwQXgOoYRMjOcNwLhHdJbqXkGbsjUsZR8w_Am3dbbxPtD1TrEPrNbe_N0HT4f-52qb8DH2oz/pub?output=csv";
-    const FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSfufNxk3E_v7Qy0s3yPOK-UOBYDGM7pgT0TrLaKqE92pkCr3Q/formResponse";
+      <!-- يظهر فقط إذا سمح المالك بإظهار هاتفه -->
+      <div id="publicContactBox" class="alert alert-info" style="display:none;">
+        وسيلة تواصل مباشرة أتاحها المالك: <strong id="resPublicContact"></strong>
+      </div>
 
-    const ADMIN_WHATSAPP = "201000000000";
-    const ADMIN_PIN      = "2026";
+      <hr style="border-color: var(--border); margin: 18px 0;">
+      <h3>إرسال رسالة فورية لصاحب الغرض</h3>
+      <p class="subtitle">تُحفظ رسالتك في حساب المالك ليتمكن من قراءتها والرد عليها حتى لو لم تكن معه شريحة اتصال.</p>
 
-    const ENTRY_ID    = "entry.566025065";
-    const ENTRY_NAME  = "entry.675203836";
-    const ENTRY_PHONE = "entry.1411822485";
-    const ENTRY_PIN   = "entry.787112400";
-    const ENTRY_NOTE  = "entry.1223610661";
+      <div class="form-group">
+        <label>رسالتك للمالك *</label>
+        <textarea id="finderMessage" placeholder="اكتب هنا مكان العثور على الغرض أو أي تفاصيل تساعد المالك في استلامه..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>رقم هاتفك أو وسيلة للتواصل معك (اختياري)</label>
+        <input type="text" id="finderContact" placeholder="رقم هاتف أو واتساب ليتواصل معك المالك">
+      </div>
+      <button class="btn btn-success" id="btnSendMsg" onclick="handleSendMessage()">إرسال الرسالة للمالك</button>
+    </div>
+  </section>
 
-    // ==========================================
-    // محرك الموسيقى الخلفية الهادئة (Web Audio Ambient)
-    // ==========================================
-    let audioCtx = null;
-    let isMusicPlaying = false;
-    let musicInterval = null;
-    let userManuallyMuted = false;
+  <!-- 2. صفحة تسجيل الدخول -->
+  <section id="loginView" class="view-section">
+    <div class="card">
+      <h2>تسجيل دخول العملاء</h2>
+      <p class="subtitle">ادخل إلى لوحة التحكم لمتابعة استيكراتك وقراءة الرسائل الواردة.</p>
 
-    const AMBIENT_CHORDS = [
-      [261.63, 329.63, 392.00, 493.88], // Cmaj7
-      [220.00, 261.63, 329.63, 392.00], // Am7
-      [174.61, 220.00, 261.63, 349.23], // Fmaj7
-      [196.00, 246.94, 293.66, 392.00]  // G6
-    ];
-    let chordIndex = 0;
+      <div class="form-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" id="btnLogin" onclick="handleLogin()">دخول إلى الحساب</button>
+    </div>
+  </section>
 
-    function playWarmChord(freqs) {
-      if (!audioCtx || !isMusicPlaying) return;
-      const now = audioCtx.currentTime;
-      freqs.forEach((freq, idx) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+  <!-- 3. صفحة إنشاء حساب جديد -->
+  <section id="registerView" class="view-section">
+    <div class="card">
+      <h2>إنشاء حساب عميل جديد</h2>
+      <p class="subtitle">أنشئ حسابك الآمن واربط استيكراتك لإدارتها في أي وقت ومن أي جهاز.</p>
 
-        gain.gain.setValueAtTime(0.0001, now + idx * 0.12);
-        gain.gain.exponentialRampToValueAtTime(0.022, now + idx * 0.12 + 1.2);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 4.2);
+      <div class="form-group">
+        <label>اسم المستخدم (بالإنجليزية أو العربية - بدون تكرار) *</label>
+        <input type="text" id="regUser" placeholder="مثال: ahmed_ali">
+      </div>
+      <div class="form-group">
+        <label>كلمة المرور (6 أحرف على الأقل) *</label>
+        <input type="password" id="regPass" placeholder="اختر كلمة مرور قوية">
+      </div>
+      <div class="form-group">
+        <label>تأكيد كلمة المرور *</label>
+        <input type="password" id="regPassConfirm" placeholder="أعد كتابة كلمة المرور">
+      </div>
+      <div class="form-group">
+        <label>رقم الهاتف أو واتساب (يُحفظ بسرية)</label>
+        <input type="text" id="regContact" placeholder="01xxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label>كود أول استيكر لربطه بالحساب (اختياري)</label>
+        <input type="text" id="regSticker" placeholder="مثال: QR101" style="text-transform: uppercase;">
+      </div>
+      <div class="form-group">
+        <label>اسم الغرض (مثال: هاتف شخصي، مفاتيح السيارة)</label>
+        <input type="text" id="regItemName" placeholder="هاتف شخصي">
+      </div>
+      <div class="form-group">
+        <label class="checkbox-row">
+          <input type="checkbox" id="regShowPhone">
+          <span>السماح بإظهار رقم هاتفي لمن يمسح الاستيكر (يمكنك تغييره لاحقاً)</span>
+        </label>
+      </div>
+      <button class="btn btn-primary" id="btnRegister" onclick="handleRegister()">إنشاء الحساب</button>
+    </div>
+  </section>
 
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+  <!-- 4. لوحة تحكم العميل -->
+  <section id="dashboardView" class="view-section">
+    <div class="card">
+      <div class="item-header">
+        <div>
+          <h2>مرحباً، <span id="dashUsername" style="color:var(--primary)"></span></h2>
+          <p class="subtitle" style="margin-bottom:0;">إدارة الاستيكرات والرسائل الواردة وإعدادات الخصوصية</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="refreshDashboard()">تحديث البيانات ↻</button>
+      </div>
 
-        osc.start(now + idx * 0.12);
-        osc.stop(now + idx * 0.12 + 4.4);
-      });
+      <div class="tabs" style="margin-top:15px;">
+        <button class="tab-btn active" onclick="switchDashTab('tabMessages', this)">الرسائل (<span id="msgCount">0</span>)</button>
+        <button class="tab-btn" onclick="switchDashTab('tabStickers', this)">استيكراتي (<span id="stickerCount">0</span>)</button>
+        <button class="tab-btn" onclick="switchDashTab('tabSettings', this)">الإعدادات</button>
+      </div>
+
+      <!-- تبويب الرسائل -->
+      <div id="tabMessages" class="dash-tab">
+        <div id="messagesList"></div>
+      </div>
+
+      <!-- تبويب الاستيكرات وإضافة استيكر -->
+      <div id="tabStickers" class="dash-tab" style="display:none;">
+        <div class="item-box" style="border-color: var(--primary);">
+          <h4>+ ربط استيكر جديد بحسابك</h4>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+            <input type="text" id="newStickerId" placeholder="كود الاستيكر" style="text-transform:uppercase;">
+            <input type="text" id="newStickerName" placeholder="اسم الغرض (حقيبة، هاتف...)">
+          </div>
+          <button class="btn btn-success btn-sm" style="margin-top:10px;" onclick="handleAddSticker()">ربط الاستيكر</button>
+        </div>
+        <div id="stickersList" style="margin-top:15px;"></div>
+      </div>
+
+      <!-- تبويب الإعدادات -->
+      <div id="tabSettings" class="dash-tab" style="display:none;">
+        <div class="form-group">
+          <label>بيانات الاتصال الخاصة بك</label>
+          <input type="text" id="setContact">
+        </div>
+        <div class="form-group">
+          <label class="checkbox-row">
+            <input type="checkbox" id="setShowPhone">
+            <span>إظهار رقم هاتفي للعامة عند مسح الاستيكر</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label>تغيير كلمة المرور (اتركه فارغاً إذا كنت لا تريد تغييرها)</label>
+          <input type="password" id="setNewPass" placeholder="كلمة المرور الجديدة (6 أحرف على الأقل)">
+        </div>
+        <button class="btn btn-primary" onclick="handleUpdateSettings()">حفظ الإعدادات</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  QR-Tago &copy; 2026 - نظام حماية واستعادة المقتنيات المفقودة
+</footer>
+
+<script>
+  // رابط خادم Google Apps Script الخاص بك
+  const API_URL = "https://script.google.com/macros/s/AKfycbymDZeHnVGg5__hUNIgdf0M-2lEER2IrotdECnernz7gsYgvXyB6AwAXt3DgZcQ_O03mQ/exec";
+
+  let currentSession = null; // { username, password }
+  let activeStickerId = "";
+
+  // عند تحميل الصفحة: فحص وجود ?id= في الرابط أو جلسة محفوظة
+  window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const urlStickerId = params.get("id");
+    if (urlStickerId) {
+      document.getElementById("scanInput").value = urlStickerId.toUpperCase();
+      handleLookup();
     }
 
-    function startAmbientMusic() {
-      if (isMusicPlaying) return;
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContext) return;
-      if (!audioCtx) audioCtx = new AudioContext();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
+    const saved = localStorage.getItem("qr_tago_session");
+    if (saved) {
+      try {
+        currentSession = JSON.parse(saved);
+        updateNavForAuth(true);
+      } catch (e) {
+        localStorage.removeItem("qr_tago_session");
+      }
+    }
+  });
 
-      isMusicPlaying = true;
-      const btn = document.getElementById('music-toggle-btn');
-      btn.textContent = "🎵";
-      btn.classList.add('playing');
+  function showAlert(msg, type = "info") {
+    const box = document.getElementById("globalAlert");
+    box.textContent = msg;
+    box.className = `alert alert-${type} show`;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setTimeout(() => { box.classList.remove("show"); }, 6000);
+  }
 
-      playWarmChord(AMBIENT_CHORDS[chordIndex]);
-      chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
+  function switchView(viewId) {
+    document.querySelectorAll(".view-section").forEach(el => el.classList.remove("active"));
+    document.getElementById(viewId).classList.add("active");
+    document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
+    if (viewId === "dashboardView" && currentSession) {
+      refreshDashboard();
+    }
+  }
 
-      musicInterval = setInterval(() => {
-        if (isMusicPlaying) {
-          playWarmChord(AMBIENT_CHORDS[chordIndex]);
-          chordIndex = (chordIndex + 1) % AMBIENT_CHORDS.length;
+  function switchDashTab(tabId, btn) {
+    document.querySelectorAll(".dash-tab").forEach(el => el.style.display = "none");
+    document.getElementById(tabId).style.display = "block";
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+  }
+
+  function updateNavForAuth(isLoggedIn) {
+    document.getElementById("navLogin").style.display = isLoggedIn ? "none" : "inline-block";
+    document.getElementById("navRegister").style.display = isLoggedIn ? "none" : "inline-block";
+    document.getElementById("navDashboard").style.display = isLoggedIn ? "inline-block" : "none";
+    document.getElementById("navLogout").style.display = isLoggedIn ? "inline-block" : "none";
+  }
+
+  // دالة مساعدة لإرسال POST بصيغة text/plain لتجنب مشاكل CORS وقراءة استجابة JSON
+  async function postToServer(payload) {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    return await res.json();
+  }
+
+  // 1. البحث عن استيكر
+  async function handleLookup() {
+    const code = document.getElementById("scanInput").value.trim().toUpperCase();
+    if (!code) return showAlert("يرجى إدخال كود الاستيكر أولاً", "error");
+
+    const btn = document.getElementById("btnLookup");
+    btn.disabled = true;
+    btn.textContent = "جاري البحث...";
+    document.getElementById("stickerResultCard").style.display = "none";
+
+    try {
+      const res = await fetch(`${API_URL}?action=lookup&id=${encodeURIComponent(code)}`);
+      const data = await res.json();
+
+      if (data.status === "found") {
+        activeStickerId = data.stickerId;
+        document.getElementById("resStickerId").textContent = data.stickerId;
+        document.getElementById("resItemName").textContent = data.itemName || "غرض مسجل في QR-Tago";
+        
+        const badge = document.getElementById("resStatusBadge");
+        const statusText = data.stickerStatus || "نشط";
+        badge.textContent = statusText;
+        badge.className = statusText === "مفقود" ? "badge badge-lost" : "badge badge-active";
+
+        const contactBox = document.getElementById("publicContactBox");
+        if (data.publicContact) {
+          document.getElementById("resPublicContact").textContent = data.publicContact;
+          contactBox.style.display = "block";
+        } else {
+          contactBox.style.display = "none";
         }
-      }, 4200);
-    }
 
-    function stopAmbientMusic() {
-      isMusicPlaying = false;
-      clearInterval(musicInterval);
-      const btn = document.getElementById('music-toggle-btn');
-      btn.textContent = "🔇";
-      btn.classList.remove('playing');
-    }
-
-    function toggleAmbientMusic() {
-      if (isMusicPlaying) {
-        userManuallyMuted = true;
-        stopAmbientMusic();
+        document.getElementById("stickerResultCard").style.display = "block";
       } else {
-        userManuallyMuted = false;
-        startAmbientMusic();
+        showAlert(data.message || "الاستيكر غير مسجل في النظام", "error");
       }
+    } catch (err) {
+      showAlert("حدث خطأ أثناء الاتصال بالخادم، حاول مرة أخرى", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "بحث عن الاستيكر";
+    }
+  }
+
+  // 2. إرسال رسالة للمالك
+  async function handleSendMessage() {
+    const message = document.getElementById("finderMessage").value.trim();
+    const senderContact = document.getElementById("finderContact").value.trim();
+    if (!message) return showAlert("يرجى كتابة نص الرسالة قبل الإرسال", "error");
+
+    const btn = document.getElementById("btnSendMsg");
+    btn.disabled = true;
+    btn.textContent = "جاري إرسال الرسالة...";
+
+    try {
+      const data = await postToServer({
+        action: "sendMessage",
+        stickerId: activeStickerId,
+        message: message,
+        senderContact: senderContact
+      });
+
+      if (data.status === "success") {
+        showAlert("تم إرسال رسالتك لصاحب الغرض بنجاح! شكراً لأمانتك.", "success");
+        document.getElementById("finderMessage").value = "";
+        document.getElementById("finderContact").value = "";
+      } else {
+        showAlert(data.message || "تعذر إرسال الرسالة", "error");
+      }
+    } catch (err) {
+      showAlert("خطأ في الاتصال بالخادم", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "إرسال الرسالة للمالك";
+    }
+  }
+
+  // 3. إنشاء حساب جديد
+  async function handleRegister() {
+    const username = document.getElementById("regUser").value.trim();
+    const password = document.getElementById("regPass").value;
+    const confirm = document.getElementById("regPassConfirm").value;
+    const contact = document.getElementById("regContact").value.trim();
+    const stickerId = document.getElementById("regSticker").value.trim().toUpperCase();
+    const itemName = document.getElementById("regItemName").value.trim();
+    const showPhone = document.getElementById("regShowPhone").checked;
+
+    if (username.length < 3) return showAlert("اسم المستخدم يجب أن يكون 3 أحرف على الأقل", "error");
+    if (password.length < 6) return showAlert("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
+    if (password !== confirm) return showAlert("كلمتا المرور غير متطابقتين", "error");
+
+    const btn = document.getElementById("btnRegister");
+    btn.disabled = true;
+    btn.textContent = "جاري إنشاء الحساب...";
+
+    try {
+      const data = await postToServer({
+        action: "register",
+        username,
+        password,
+        contact,
+        stickerId,
+        itemName,
+        showPhone
+      });
+
+      if (data.status === "success") {
+        currentSession = { username, password };
+        localStorage.setItem("qr_tago_session", JSON.stringify(currentSession));
+        updateNavForAuth(true);
+        showAlert("تم إنشاء حسابك بنجاح!", "success");
+        switchView("dashboardView");
+      } else {
+        showAlert(data.message || "فشل إنشاء الحساب", "error");
+      }
+    } catch (err) {
+      showAlert("خطأ في الاتصال بالخادم", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "إنشاء الحساب";
+    }
+  }
+
+  // 4. تسجيل الدخول
+  async function handleLogin() {
+    const username = document.getElementById("loginUser").value.trim();
+    const password = document.getElementById("loginPass").value;
+    if (!username || !password) return showAlert("أدخل اسم المستخدم وكلمة المرور", "error");
+
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+    btn.textContent = "جاري التحقق...";
+
+    try {
+      const data = await postToServer({ action: "login", username, password });
+      if (data.status === "success") {
+        currentSession = { username: data.user.username, password };
+        localStorage.setItem("qr_tago_session", JSON.stringify(currentSession));
+        updateNavForAuth(true);
+        renderDashboard(data);
+        switchView("dashboardView");
+      } else {
+        showAlert(data.message || "بيانات الدخول غير صحيحة", "error");
+      }
+    } catch (err) {
+      showAlert("خطأ في الاتصال بالخادم", "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "دخول إلى الحساب";
+    }
+  }
+
+  function logout() {
+    currentSession = null;
+    localStorage.removeItem("qr_tago_session");
+    updateNavForAuth(false);
+    switchView("scanView");
+    showAlert("تم تسجيل الخروج بنجاح", "info");
+  }
+
+  // 5. جلب وتحديث لوحة التحكم
+  async function refreshDashboard() {
+    if (!currentSession) return;
+    try {
+      const data = await postToServer({
+        action: "login",
+        username: currentSession.username,
+        password: currentSession.password
+      });
+      if (data.status === "success") {
+        renderDashboard(data);
+      } else {
+        logout();
+      }
+    } catch (err) {
+      showAlert("تعذر تحديث البيانات", "error");
+    }
+  }
+
+  function renderDashboard(data) {
+    document.getElementById("dashUsername").textContent = data.user.username;
+    document.getElementById("setContact").value = data.user.contact || "";
+    document.getElementById("setShowPhone").checked = Boolean(data.user.showPhone);
+
+    // عرض الرسائل
+    const msgList = document.getElementById("messagesList");
+    document.getElementById("msgCount").textContent = data.messages.length;
+    if (data.messages.length === 0) {
+      msgList.innerHTML = `<p class="subtitle">لا توجد رسائل واردة حتى الآن.</p>`;
+    } else {
+      msgList.innerHTML = data.messages.map(m => `
+        <div class="item-box">
+          <div class="item-header">
+            <strong>استيكر: <span style="color:var(--primary)">${m.stickerId}</span></strong>
+            <span class="badge ${m.status === 'غير مقروءة' ? 'badge-unread' : 'badge-active'}">${m.status}</span>
+          </div>
+          <p style="margin: 8px 0; line-height:1.6;">${escapeHtml(m.text)}</p>
+          <p style="font-size:0.85rem; color:var(--text-muted);">وسيلة تواصل المرسل: <strong>${escapeHtml(m.senderContact)}</strong></p>
+          ${m.reply ? `<div class="alert alert-success show" style="margin-top:8px; margin-bottom:0;">ردك المسجل: ${escapeHtml(m.reply)}</div>` : `
+            <div style="display:flex; gap:8px; margin-top:10px;">
+              <input type="text" id="reply_${m.messageId}" placeholder="اكتب رداً أو ملاحظة..." style="padding:8px;">
+              <button class="btn btn-primary btn-sm" onclick="handleReply('${m.messageId}')">حفظ الرد</button>
+            </div>
+          `}
+        </div>
+      `).join("");
     }
 
-    // تشغيل الموسيقى الهادئة تلقائياً عند أول لمسة من المستخدم (ما لم يقم بكتمها يدوياً)
-    function initAudioOnFirstTouch() {
-      if (!isMusicPlaying && !userManuallyMuted) {
-        startAmbientMusic();
-      }
-      document.removeEventListener('pointerdown', initAudioOnFirstTouch);
+    // عرض الاستيكرات
+    const stList = document.getElementById("stickersList");
+    document.getElementById("stickerCount").textContent = data.stickers.length;
+    if (data.stickers.length === 0) {
+      stList.innerHTML = `<p class="subtitle">لم تقم بربط أي استيكر بحسابك بعد.</p>`;
+    } else {
+      stList.innerHTML = data.stickers.map(s => `
+        <div class="item-box">
+          <div class="item-header">
+            <strong>${escapeHtml(s.itemName)} (<span style="color:var(--primary)">${s.stickerId}</span>)</strong>
+            <select onchange="handleUpdateSticker('${s.stickerId}', this.value)" style="width:auto; padding:4px 10px;">
+              <option value="نشط" ${s.status === 'نشط' ? 'selected' : ''}>نشط</option>
+              <option value="مفقود" ${s.status === 'مفقود' ? 'selected' : ''}>مفقود</option>
+              <option value="تم الاسترجاع" ${s.status === 'تم الاسترجاع' ? 'selected' : ''}>تم الاسترجاع</option>
+            </select>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted);">رابط الاستيكر للطباعة: <span dir="ltr">https://qr-tago.github.io/qr/?id=${s.stickerId}</span></p>
+        </div>
+      `).join("");
     }
-    document.addEventListener('pointerdown', initAudioOnFirstTouch);
+  }
 
-    // إعداد PWA Manifest
-    (function setupPWA() {
-      const svgIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='15' y1='10' x2='105' y2='110' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0%25' stop-color='%23F6E08B'/%3E%3Cstop offset='50%25' stop-color='%23D4AF37'/%3E%3Cstop offset='100%25' stop-color='%23997A15'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='120' height='120' rx='26' fill='%2309111e'/%3E%3Cpath d='M60 16L94 29V58C94 81.5 79.2 100.8 60 108C40.8 100.8 26 81.5 26 58V29L60 16Z' fill='url(%23g)'/%3E%3Cpath d='M44 47V41H50M70 41H76V47M76 69V75H70M50 75H44V69' stroke='%2309111e' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M51 49H69V54.5H62.8V71H57.2V54.5H51V49Z' fill='%2309111e'/%3E%3C/svg%3E";
-      const manifestObj = {
-        name: "QR-Tago | درع الحماية الذكي",
-        short_name: "QR-Tago",
-        start_url: window.location.origin + window.location.pathname,
-        display: "standalone",
-        background_color: "#09111e",
-        theme_color: "#09111e",
-        icons: [
-          { src: svgIcon, sizes: "192x192", type: "image/svg+xml" },
-          { src: svgIcon, sizes: "512x512", type: "image/svg+xml" }
-        ]
-      };
-      const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-      document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(blob));
-    })();
+  async function handleAddSticker() {
+    const stickerId = document.getElementById("newStickerId").value.trim().toUpperCase();
+    const itemName = document.getElementById("newStickerName").value.trim();
+    if (!stickerId) return showAlert("أدخل كود الاستيكر", "error");
 
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('install-app-btn').classList.remove('hidden');
+    const data = await postToServer({
+      action: "addSticker",
+      username: currentSession.username,
+      password: currentSession.password,
+      stickerId,
+      itemName
     });
 
-    async function installPWA() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        document.getElementById('install-app-btn').classList.add('hidden');
-      } else {
-        alert("لتثبيت التطبيق على هاتفك:\nاضغط على قائمة المتصفح (⋮) في الأعلى ثم اختر (إضافة إلى الشاشة الرئيسية / Install App).");
-      }
+    if (data.status === "success") {
+      showAlert(data.message, "success");
+      document.getElementById("newStickerId").value = "";
+      document.getElementById("newStickerName").value = "";
+      refreshDashboard();
+    } else {
+      showAlert(data.message, "error");
+    }
+  }
+
+  async function handleUpdateSticker(stickerId, newStatus) {
+    const data = await postToServer({
+      action: "updateSticker",
+      username: currentSession.username,
+      password: currentSession.password,
+      stickerId,
+      stickerStatus: newStatus
+    });
+    if (data.status === "success") showAlert("تم تحديث حالة الاستيكر", "success");
+  }
+
+  async function handleReply(messageId) {
+    const reply = document.getElementById(`reply_${messageId}`).value.trim();
+    const data = await postToServer({
+      action: "replyMessage",
+      username: currentSession.username,
+      password: currentSession.password,
+      messageId,
+      reply
+    });
+    if (data.status === "success") {
+      showAlert("تم حفظ الرد وتحديث حالة الرسالة", "success");
+      refreshDashboard();
+    }
+  }
+
+  async function handleUpdateSettings() {
+    const contact = document.getElementById("setContact").value.trim();
+    const showPhone = document.getElementById("setShowPhone").checked;
+    const newPassword = document.getElementById("setNewPass").value;
+
+    if (newPassword && newPassword.length < 6) {
+      return showAlert("كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل", "error");
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let stickerId = (urlParams.get('id') || '').trim();
-    const openAdminDirectly = urlParams.get('admin') === '1';
-
-    let currentRecord = null;
-    let allUniqueRecords = [];
-    let currentLang = 'ar';
-    let lastRemainingDays = 365;
-
-    let logoTapCount = 0;
-    let logoTapTimer = null;
-    function handleLogoTap() {
-      logoTapCount++;
-      clearTimeout(logoTapTimer);
-      if (logoTapCount >= 5) {
-        logoTapCount = 0;
-        openAdminPanel();
-      } else {
-        logoTapTimer = setTimeout(() => { logoTapCount = 0; }, 1500);
-      }
-    }
-
-    function openAdminPanel() {
-      const pin = prompt("👑 أدخل الرقم السري للوحة تحكم الإدارة:");
-      if (pin === null) return;
-      if (pin.trim() === ADMIN_PIN) {
-        document.getElementById('loading-view').classList.add('hidden');
-        document.getElementById('register-view').classList.add('hidden');
-        document.getElementById('owner-view').classList.add('hidden');
-        document.getElementById('badges-row').classList.add('hidden');
-        document.getElementById('admin-view').classList.remove('hidden');
-        renderAdminList();
-      } else {
-        alert("❌ الرقم السري للإدارة غير صحيح!");
-      }
-    }
-
-    function closeAdminPanel() {
-      document.getElementById('admin-view').classList.add('hidden');
-      document.getElementById('badges-row').classList.remove('hidden');
-      if (currentRecord && currentRecord.phone) {
-        document.getElementById('owner-view').classList.remove('hidden');
-      } else {
-        document.getElementById('register-view').classList.remove('hidden');
-      }
-    }
-
-    function renderAdminList() {
-      const searchQ = (document.getElementById('admin-search').value || '').trim().toLowerCase();
-      let activeCount = 0;
-      let expiringCount = 0;
-
-      allUniqueRecords.forEach(rec => {
-        const sub = calculateSubscription(rec.timestamp);
-        if (sub.remainingDays > 30) activeCount++;
-        else expiringCount++;
-      });
-
-      document.getElementById('stat-total').textContent = allUniqueRecords.length;
-      document.getElementById('stat-active').textContent = activeCount;
-      document.getElementById('stat-expiring').textContent = expiringCount;
-
-      const listEl = document.getElementById('admin-records-list');
-      listEl.innerHTML = "";
-
-      const filtered = allUniqueRecords.filter(r =>
-        r.id.toLowerCase().includes(searchQ) ||
-        r.name.toLowerCase().includes(searchQ) ||
-        r.phone.includes(searchQ)
-      );
-
-      if (filtered.length === 0) {
-        listEl.innerHTML = `<div style="text-align:center; color:#94a3b8; font-size:13px; padding:16px;">لا توجد نتائج مطابقة</div>`;
-        return;
-      }
-
-      filtered.forEach(rec => {
-        const sub = calculateSubscription(rec.timestamp);
-        let cleanPhone = rec.phone.replace(/\D/g, '');
-        if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
-        const waText = encodeURIComponent(`مرحباً ${rec.name}، معك إدارة QR-Tago بخصوص استيكر الحماية رقم (${rec.id}). متبقي في اشتراكك ${sub.remainingDays} يوم.`);
-        const baseUrl = window.location.origin + window.location.pathname;
-
-        const statusColor = sub.remainingDays === 0 ? '#f87171' : (sub.remainingDays <= 30 ? '#fbbf24' : '#4ade80');
-
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'admin-item';
-        itemDiv.innerHTML = `
-          <div class="admin-item-info">
-            <div><strong style="color:var(--gold-light);">#${rec.id}</strong> • <strong>${rec.name}</strong></div>
-            <div style="color:#94a3b8;">📱 ${rec.phone}</div>
-            <div style="color:${statusColor}; font-weight:700;">⏳ متبقي ${sub.remainingDays} يوم (${sub.formattedDate})</div>
-          </div>
-          <div class="admin-item-actions">
-            <a href="https://wa.me/${cleanPhone}?text=${waText}" target="_blank" class="mini-wa-btn">واتساب</a>
-            <a href="${baseUrl}?id=${encodeURIComponent(rec.id)}" class="mini-view-btn">فتح</a>
-          </div>
-        `;
-        listEl.appendChild(itemDiv);
-      });
-    }
-
-    const CATEGORIES = {
-      general: { ar: "🛡️ حماية عامة", en: "🛡️ General" },
-      car:     { ar: "🚗 سيارة / مركبة", en: "🚗 Vehicle" },
-      phone:   { ar: "📱 موبايل / لابتوب", en: "📱 Electronics" },
-      bag:     { ar: "🎒 شنطة / أمتعة", en: "🎒 Luggage / Bag" },
-      kids:    { ar: "👶 طوارئ / عائلة", en: "👶 Emergency / Kids" }
-    };
-
-    const I18N = {
-      ar: {
-        brandSub: "درع الحماية الذكي",
-        stickerLabel: "كود الاستيكر:",
-        loadingText: "جاري تجهيز كود الحماية...",
-        formTitle: "تفعيل كود حماية جديد",
-        formDesc: "تفعيل فوري لمدة 365 يوماً. أدخل بياناتك لربط الكود برقمك الآن.",
-        editFormTitle: "تعديل بيانات الاستيكر",
-        editFormDesc: "عدّل بياناتك أو إعدادات الطوارئ والخصوصية ثم اضغط حفظ.",
-        namePh: "اسم المالك (أو اللقب)",
-        phonePh: "رقم الهاتف / الواتساب (010xxxxxxxx)",
-        notePh: "وصف الغرض أو رسالة طوارئ (اختياري)",
-        pinPh: "اختر رقماً سرياً (PIN) لتعديل البيانات لاحقاً",
-        optLost: "🚨 تفعيل وضع \"مفقود / توجد مكافأة\"",
-        optPrivate: "🔒 وضع الخصوصية (إخفاء زر الاتصال والاكتفاء بواتساب)",
-        saveBtn: "✨ حفظ وتفعيل الاستيكر",
-        lostBannerText: "🚨 تنبيه: هذا الغرض مفقود! توجد مكافأة لمن يجده ويعيده.",
-        registeredTo: "هذا الغرض مسجل باسم",
-        actDateLabel: "📅 التفعيل:",
-        expiredText: "⚠️ انتهت مدة الاشتراك السنوي (365 يوماً) لهذا الاستيكر. يرجى تجديد الاشتراك لإعادة تفعيل أزرار التواصل.",
-        qrSaveHint: "كود QR الخاص بك (اضغط مطولاً لحفظ الصورة)",
-        copyBtn: "نسخ الرابط",
-        callBtn: "📞 اتصال هاتفي مباشر",
-        waBtn: "💬 مراسلة عبر واتساب",
-        gpsBtn: "📍 إرسال موقعي الحالي للمالك (GPS)",
-        vcardBtn: "📇 حفظ جهة الاتصال في الهاتف",
-        renewBtn: "🔄 تجديد الاشتراك السنوي الآن",
-        editBtn: "✏️ تعديل البيانات (للمالك فقط)",
-        footerText: "نظام الاستيكر الذكي • حماية وتواصل سريع"
-      },
-      en: {
-        brandSub: "Smart Protection Shield",
-        stickerLabel: "Sticker ID:",
-        loadingText: "Preparing protection shield...",
-        formTitle: "Activate New Sticker",
-        formDesc: "Instant 365-day activation. Enter your details to link this tag.",
-        editFormTitle: "Edit Sticker Details",
-        editFormDesc: "Update your contact details, lost mode, or privacy settings.",
-        namePh: "Owner Name (or Nickname)",
-        phonePh: "Phone / WhatsApp Number",
-        notePh: "Item description or emergency note (Optional)",
-        pinPh: "Create a secret PIN to edit later",
-        optLost: "🚨 Enable \"Lost / Reward Offered\" Mode",
-        optPrivate: "🔒 Privacy Mode (Hide phone call, WhatsApp only)",
-        saveBtn: "✨ Save & Activate Sticker",
-        lostBannerText: "🚨 ALERT: This item is LOST! Reward offered upon return.",
-        registeredTo: "This item is registered to",
-        actDateLabel: "📅 Activated:",
-        expiredText: "⚠️ The 365-day annual subscription for this tag has expired. Please renew to restore contact buttons.",
-        qrSaveHint: "Your Personal QR Code (Long-press to save)",
-        copyBtn: "Copy Link",
-        callBtn: "📞 Direct Phone Call",
-        waBtn: "💬 Message on WhatsApp",
-        gpsBtn: "📍 Send My Current GPS Location",
-        vcardBtn: "📇 Save Contact to Phone",
-        renewBtn: "🔄 Renew Annual Subscription",
-        editBtn: "✏️ Edit Details (Owner Only)",
-        footerText: "Smart Tag System • Instant Protection & Contact"
-      }
-    };
-
-    function toggleLanguage() {
-      currentLang = currentLang === 'ar' ? 'en' : 'ar';
-      document.documentElement.lang = currentLang;
-      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-      document.getElementById('lang-btn').textContent = currentLang === 'ar' ? 'English 🌐' : 'عربي 🌐';
-      document.getElementById('brand-ar-title').style.display = currentLang === 'ar' ? 'block' : 'none';
-
-      document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.getAttribute('data-i18n');
-        if (I18N[currentLang][key]) el.textContent = I18N[currentLang][key];
-      });
-
-      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-        const key = el.getAttribute('data-i18n-ph');
-        if (I18N[currentLang][key]) el.placeholder = I18N[currentLang][key];
-      });
-
-      if (currentRecord) {
-        updateCounterDisplay(lastRemainingDays);
-        const cat = currentRecord.category || 'general';
-        document.getElementById('category-badge').textContent = CATEGORIES[cat] ? CATEGORIES[cat][currentLang] : CATEGORIES.general[currentLang];
-      }
-    }
-
-    function encodeMetadata(note, category, isLost, isPrivate) {
-      let flags = [];
-      if (category && category !== 'general') flags.push(`cat:${category}`);
-      if (isLost) flags.push('lost:1');
-      if (isPrivate) flags.push('priv:1');
-      if (flags.length === 0) return note;
-      return `${note} [[${flags.join('|')}]]`.trim();
-    }
-
-    function decodeMetadata(rawNote) {
-      let cleanNote = rawNote || "";
-      let category = "general";
-      let isLost = false;
-      let isPrivate = false;
-
-      const match = cleanNote.match(/\[\[(.*?)\]\]$/);
-      if (match) {
-        cleanNote = cleanNote.replace(match[0], '').trim();
-        const parts = match[1].split('|');
-        parts.forEach(p => {
-          if (p.startsWith('cat:')) category = p.replace('cat:', '');
-          if (p === 'lost:1') isLost = true;
-          if (p === 'priv:1') isPrivate = true;
-        });
-      }
-      return { cleanNote, category, isLost, isPrivate };
-    }
-
-    function togglePinVisibility() {
-      const pinInput = document.getElementById('owner-pin');
-      pinInput.type = pinInput.type === 'password' ? 'text' : 'password';
-    }
-
-    async function fetchWithTimeout(resource, options = {}) {
-      const { timeout = 2500 } = options;
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), timeout);
-      const response = await fetch(resource, { ...options, signal: controller.signal });
-      clearTimeout(id);
-      return response;
-    }
-
-    function calculateSubscription(timestampStr) {
-      let regDate = new Date();
-      if (timestampStr) {
-        const parts = timestampStr.trim().split(/[\s\/\-:]+/);
-        if (parts.length >= 3) {
-          let p0 = parseInt(parts[0], 10);
-          let p1 = parseInt(parts[1], 10);
-          let p2 = parseInt(parts[2], 10);
-          if (p0 > 1000) {
-            regDate = new Date(p0, p1 - 1, p2);
-          } else if (p0 > 12) {
-            regDate = new Date(p2, p1 - 1, p0);
-          } else {
-            const parsed = new Date(timestampStr);
-            if (!isNaN(parsed.getTime())) regDate = parsed;
-          }
-        }
-      }
-
-      const now = new Date();
-      const diffTime = now.getTime() - regDate.getTime();
-      const daysPassed = Math.max(0, Math.floor(diffTime / (1000 * 60 * 60 * 24)));
-      const remainingDays = Math.max(0, 365 - daysPassed);
-      const formattedDate = `${String(regDate.getDate()).padStart(2, '0')}/${String(regDate.getMonth() + 1).padStart(2, '0')}/${regDate.getFullYear()}`;
-      return { formattedDate, remainingDays };
-    }
-
-    function updateCounterDisplay(remainingDays) {
-      lastRemainingDays = remainingDays;
-      const counterBadge = document.getElementById('days-counter-badge');
-      counterBadge.classList.remove('warning', 'expired');
-      if (remainingDays === 0) {
-        counterBadge.textContent = currentLang === 'ar' ? "⛔ 0 يوم (منتهي)" : "⛔ 0 Days (Expired)";
-        counterBadge.classList.add('expired');
-      } else {
-        counterBadge.textContent = currentLang === 'ar' ? `⏳ متبقي ${remainingDays} يوم` : `⏳ ${remainingDays} Days Left`;
-        if (remainingDays <= 30) counterBadge.classList.add('warning');
-      }
-    }
-
-    async function fetchStickerData() {
-      let rows = [];
-      try {
-        const response = await fetchWithTimeout(SHEET_CSV_URL + "&t=" + Date.now(), { timeout: 2500 });
-        if (response.ok) {
-          const csvText = await response.text();
-          if (!csvText.trim().startsWith("<")) {
-            rows = parseCSV(csvText);
-          }
-        }
-      } catch (err) {
-        console.warn("Fallback numbering:", err);
-      }
-
-      const mapById = new Map();
-      for (let i = 1; i < rows.length; i++) {
-        if (rows[i][1] && rows[i][2]) {
-          const idKey = rows[i][1].trim();
-          const meta = decodeMetadata(rows[i][5] ? rows[i][5].trim() : "");
-          mapById.set(idKey.toLowerCase(), {
-            timestamp: rows[i][0] ? rows[i][0].trim() : "",
-            id: idKey,
-            name: rows[i][2] ? rows[i][2].trim() : "",
-            phone: rows[i][3] ? rows[i][3].trim() : "",
-            pin: rows[i][4] ? rows[i][4].trim() : "",
-            note: meta.cleanNote,
-            category: meta.category,
-            isLost: meta.isLost,
-            isPrivate: meta.isPrivate
-          });
-        }
-      }
-      allUniqueRecords = Array.from(mapById.values()).reverse();
-
-      if (!stickerId) {
-        let localLastId = parseInt(localStorage.getItem('qr_tago_last_id') || '1000', 10);
-        let maxId = isNaN(localLastId) ? 1000 : localLastId;
-
-        for (let i = 1; i < rows.length; i++) {
-          if (rows[i][1]) {
-            const num = parseInt(rows[i][1].replace(/\D/g, ''), 10);
-            if (!isNaN(num) && num > maxId) maxId = num;
-          }
-        }
-        stickerId = String(maxId + 1);
-        document.getElementById('display-id').textContent = stickerId;
-        document.getElementById('loading-view').classList.add('hidden');
-        document.getElementById('register-view').classList.remove('hidden');
-        if (openAdminDirectly) openAdminPanel();
-        return;
-      }
-
-      document.getElementById('display-id').textContent = stickerId;
-      currentRecord = mapById.get(stickerId.toLowerCase()) || null;
-
-      document.getElementById('loading-view').classList.add('hidden');
-
-      if (currentRecord && currentRecord.phone) {
-        showOwnerView(currentRecord, false);
-      } else {
-        document.getElementById('register-view').classList.remove('hidden');
-      }
-
-      if (openAdminDirectly) openAdminPanel();
-    }
-
-    function parseCSV(str) {
-      const arr = [];
-      let quote = false;
-      for (let row = 0, col = 0, c = 0; c < str.length; c++) {
-        let cc = str[c], nc = str[c + 1];
-        arr[row] = arr[row] || [];
-        arr[row][col] = arr[row][col] || '';
-        if (cc == '"' && quote && nc == '"') { arr[row][col] += cc; ++c; continue; }
-        if (cc == '"') { quote = !quote; continue; }
-        if (cc == ',' && !quote) { ++col; continue; }
-        if (cc == '\r' && nc == '\n' && !quote) { ++row; col = 0; ++c; continue; }
-        if (cc == '\n' && !quote) { ++row; col = 0; continue; }
-        if (cc == '\r' && !quote) { ++row; col = 0; continue; }
-        arr[row][col] += cc;
-      }
-      return arr;
-    }
-
-    function showOwnerView(data, justRegistered) {
-      document.getElementById('register-view').classList.add('hidden');
-      document.getElementById('owner-view').classList.remove('hidden');
-
-      document.getElementById('view-name').textContent = data.name;
-
-      const catBadge = document.getElementById('category-badge');
-      const catKey = data.category || 'general';
-      catBadge.textContent = CATEGORIES[catKey] ? CATEGORIES[catKey][currentLang] : CATEGORIES.general[currentLang];
-      catBadge.classList.remove('hidden');
-
-      const mainCard = document.getElementById('main-card');
-      const lostBanner = document.getElementById('lost-banner');
-      if (data.isLost) {
-        mainCard.classList.add('lost-mode');
-        lostBanner.classList.remove('hidden');
-      } else {
-        mainCard.classList.remove('lost-mode');
-        lostBanner.classList.add('hidden');
-      }
-
-      const callBtn = document.getElementById('call-btn');
-      const vcardBtn = document.getElementById('vcard-btn');
-      if (data.isPrivate) {
-        callBtn.classList.add('hidden');
-        vcardBtn.classList.add('hidden');
-      } else {
-        callBtn.classList.remove('hidden');
-        vcardBtn.classList.remove('hidden');
-      }
-
-      const noteBox = document.getElementById('view-note-box');
-      if (data.note) {
-        noteBox.textContent = data.note;
-        noteBox.classList.remove('hidden');
-      } else {
-        noteBox.classList.add('hidden');
-      }
-
-      const subInfo = calculateSubscription(data.timestamp);
-      document.getElementById('reg-date-text').textContent = subInfo.formattedDate;
-      updateCounterDisplay(subInfo.remainingDays);
-
-      if (subInfo.remainingDays === 0) {
-        document.getElementById('expired-box').classList.remove('hidden');
-        document.getElementById('active-actions').classList.add('hidden');
-        const renewBtn = document.getElementById('renew-btn');
-        renewBtn.classList.remove('hidden');
-        const renewMsg = encodeURIComponent(`مرحباً QR-Tago، أرغب في تجديد الاشتراك السنوي للاستيكر رقم (${stickerId}) باسم (${data.name}).`);
-        renewBtn.href = `https://wa.me/${ADMIN_WHATSAPP}?text=${renewMsg}`;
-      } else {
-        document.getElementById('expired-box').classList.add('hidden');
-        document.getElementById('active-actions').classList.remove('hidden');
-        document.getElementById('renew-btn').classList.add('hidden');
-      }
-
-      if (justRegistered) {
-        const baseUrl = window.location.origin + window.location.pathname;
-        const personalUrl = `${baseUrl}?id=${encodeURIComponent(stickerId)}`;
-        document.getElementById('personal-link-text').textContent = personalUrl;
-        document.getElementById('generated-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(personalUrl)}`;
-        document.getElementById('qr-share-box').classList.remove('hidden');
-        window.history.replaceState({}, '', `?id=${encodeURIComponent(stickerId)}`);
-      }
-
-      let cleanPhone = data.phone.replace(/\D/g, '');
-      if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
-
-      callBtn.href = "tel:" + data.phone;
-      const waMsg = encodeURIComponent(`مرحباً ${data.name}، قمت بمسح كود الحماية الذكي QR-Tago الخاص بك (كود رقم ${stickerId}).`);
-      document.getElementById('wa-btn').href = `https://wa.me/${cleanPhone}?text=${waMsg}`;
-    }
-
-    function downloadVCard() {
-      if (!currentRecord) return;
-      const vcard = [
-        "BEGIN:VCARD",
-        "VERSION:3.0",
-        `FN:${currentRecord.name} (QR-Tago #${stickerId})`,
-        `TEL;TYPE=CELL:${currentRecord.phone}`,
-        `NOTE:QR-Tago Smart Shield - ID ${stickerId}`,
-        "END:VCARD"
-      ].join("\n");
-
-      const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `QR-Tago-${stickerId}.vcf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function copyPersonalLink() {
-      const link = document.getElementById('personal-link-text').textContent;
-      navigator.clipboard.writeText(link);
-      alert(currentLang === 'ar' ? "✅ تم نسخ الرابط: " + link : "✅ Link copied: " + link);
-    }
-
-    function sendLocation() {
-      if (!currentRecord) return;
-      const btn = document.getElementById('gps-btn');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = currentLang === 'ar' ? "<span>⏳ جاري تحديد موقعك بدقة...</span>" : "<span>⏳ Getting GPS location...</span>";
-
-      if (!navigator.geolocation) {
-        alert(currentLang === 'ar' ? "متصفحك لا يدعم تحديد الموقع." : "Geolocation not supported.");
-        btn.innerHTML = originalHtml;
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
-          let cleanPhone = currentRecord.phone.replace(/\D/g, '');
-          if (cleanPhone.startsWith('01')) cleanPhone = '2' + cleanPhone;
-
-          const msg = encodeURIComponent(`مرحباً ${currentRecord.name}، وجدت الغرض الخاص بك (كود QR-Tago رقم ${stickerId})، وهذا موقعي الحالي على الخريطة:\n${mapsLink}`);
-          btn.innerHTML = originalHtml;
-          window.open(`https://wa.me/${cleanPhone}?text=${msg}`, '_blank');
-        },
-        () => {
-          alert(currentLang === 'ar' ? "يرجى تفعيل خدمة الموقع (GPS) في هاتفك لإرسال الموقع." : "Please enable GPS location permissions.");
-          btn.innerHTML = originalHtml;
-        },
-        { enableHighAccuracy: true, timeout: 10000 }
-      );
-    }
-
-    function requestEdit() {
-      if (!currentRecord) return;
-      const enteredPin = prompt(currentLang === 'ar' ? "أدخل الرقم السري (PIN) لتعديل البيانات:" : "Enter your secret PIN to edit:");
-      if (enteredPin === null) return;
-      if (enteredPin.trim() === currentRecord.pin) {
-        document.getElementById('owner-view').classList.add('hidden');
-        document.getElementById('register-view').classList.remove('hidden');
-        document.getElementById('form-title').textContent = I18N[currentLang].editFormTitle;
-        document.getElementById('form-desc').textContent = I18N[currentLang].editFormDesc;
-        document.getElementById('item-category').value = currentRecord.category || 'general';
-        document.getElementById('owner-name').value = currentRecord.name;
-        document.getElementById('owner-phone').value = currentRecord.phone;
-        document.getElementById('item-note').value = currentRecord.note;
-        document.getElementById('owner-pin').value = currentRecord.pin;
-        document.getElementById('opt-lost').checked = !!currentRecord.isLost;
-        document.getElementById('opt-private').checked = !!currentRecord.isPrivate;
-      } else {
-        alert(currentLang === 'ar' ? "❌ الرقم السري غير صحيح!" : "❌ Incorrect PIN!");
-      }
-    }
-
-    document.getElementById('activation-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const originalHtml = btn.innerHTML;
-      btn.disabled = true;
-      btn.innerHTML = currentLang === 'ar' ? "<span>⏳ جاري الحفظ والتفعيل...</span>" : "<span>⏳ Saving...</span>";
-
-      const catVal   = document.getElementById('item-category').value;
-      const nameVal  = document.getElementById('owner-name').value.trim();
-      const phoneVal = document.getElementById('owner-phone').value.trim();
-      const noteVal  = document.getElementById('item-note').value.trim();
-      const pinVal   = document.getElementById('owner-pin').value.trim();
-      const isLost   = document.getElementById('opt-lost').checked;
-      const isPriv   = document.getElementById('opt-private').checked;
-
-      const encodedNote = encodeMetadata(noteVal, catVal, isLost, isPriv);
-
-      const formData = new URLSearchParams();
-      formData.append(ENTRY_ID, stickerId);
-      formData.append(ENTRY_NAME, nameVal);
-      formData.append(ENTRY_PHONE, phoneVal);
-      formData.append(ENTRY_PIN, pinVal);
-      formData.append(ENTRY_NOTE, encodedNote);
-
-      try {
-        await fetch(FORM_ACTION_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: formData.toString()
-        });
-
-        const numericId = parseInt(stickerId.replace(/\D/g, ''), 10);
-        if (!isNaN(numericId)) {
-          localStorage.setItem('qr_tago_last_id', String(numericId));
-        }
-
-        currentRecord = {
-          timestamp: new Date().toISOString(),
-          id: stickerId,
-          name: nameVal,
-          phone: phoneVal,
-          pin: pinVal,
-          note: noteVal,
-          category: catVal,
-          isLost: isLost,
-          isPrivate: isPriv
-        };
-        alert(currentLang === 'ar' ? `✅ تم تفعيل الكود رقم ${stickerId} بنجاح لمدة 365 يوم!` : `✅ Tag #${stickerId} activated for 365 days!`);
-        showOwnerView(currentRecord, true);
-      } catch (error) {
-        alert(currentLang === 'ar' ? "حدث خطأ أثناء الاتصال، تأكد من الإنترنت وحاول مرة أخرى." : "Connection error, please try again.");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalHtml;
-      }
+    const data = await postToServer({
+      action: "updateSettings",
+      username: currentSession.username,
+      password: currentSession.password,
+      contact,
+      showPhone,
+      newPassword
     });
 
-    fetchStickerData();
-  </script>
+    if (data.status === "success") {
+      if (newPassword) {
+        currentSession.password = newPassword;
+        localStorage.setItem("qr_tago_session", JSON.stringify(currentSession));
+        document.getElementById("setNewPass").value = "";
+      }
+      showAlert(data.message, "success");
+    } else {
+      showAlert(data.message, "error");
+    }
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text || "";
+    return div.innerHTML;
+  }
+</script>
+
 </body>
 </html>
