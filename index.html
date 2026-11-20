@@ -137,7 +137,6 @@
     .checkbox-row { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .checkbox-row input { width: auto; }
 
-    /* بطاقة عرض QR Code */
     .qr-card-body {
       display: flex;
       gap: 16px;
@@ -154,10 +153,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-width: 126px;
+      min-width: 130px;
     }
-    .qr-img-wrapper img { width: 110px; height: 110px; display: block; }
-    .qr-code-label { color: #0f172a; font-weight: 800; font-size: 0.8rem; margin-top: 4px; letter-spacing: 1px; }
+    .qr-img-wrapper img { width: 115px; height: 115px; display: block; }
+    .qr-code-label { color: #0f172a; font-weight: 800; font-size: 0.85rem; margin-top: 4px; letter-spacing: 1px; }
     .qr-actions { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 8px; }
 
     .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
@@ -191,7 +190,7 @@
 <main>
   <div id="globalAlert" class="alert"></div>
 
-  <!-- 1. صفحة الشخص الذي يعثر على الغرض -->
+  <!-- 1. صفحة فحص الاستيكر -->
   <section id="scanView" class="view-section active">
     <div class="card">
       <h2>هل عثرت على غرض مفقود؟</h2>
@@ -199,11 +198,19 @@
       
       <div class="form-group">
         <label>كود الاستيكر</label>
-        <input type="text" id="scanInput" placeholder="مثال: TAG-123456" style="text-transform: uppercase;">
+        <input type="text" id="scanInput" placeholder="أدخل كود الاستيكر" style="text-transform: uppercase;">
       </div>
       <button class="btn btn-primary" id="btnLookup" onclick="handleLookup()">بحث عن الاستيكر</button>
     </div>
 
+    <!-- يظهر إذا كان الاستيكر جديداً ولم يُربط بحساب بعد -->
+    <div id="unregisteredCard" class="card" style="display:none; border-color: var(--primary);">
+      <h3>هذا الاستيكر غير مفعل بعد</h3>
+      <p class="subtitle">إذا كنت قد اشتريت هذا الاستيكر للتو، يمكنك تفعيله وربطه بحسابك الخاص الآن.</p>
+      <button class="btn btn-primary" onclick="goActivateSticker()">تفعيل الاستيكر وإنشاء حساب</button>
+    </div>
+
+    <!-- نتيجة البحث ونموذج إرسال رسالة للمالك -->
     <div id="stickerResultCard" class="card" style="display:none;">
       <div class="item-header">
         <h3 id="resItemName">غرض مسجل في QR-Tago</h3>
@@ -235,7 +242,7 @@
   <section id="loginView" class="view-section">
     <div class="card">
       <h2>تسجيل دخول العملاء</h2>
-      <p class="subtitle">ادخل إلى لوحة التحكم لعرض رمز QR الخاص بك ومتابعة استيكراتك والرسائل الواردة.</p>
+      <p class="subtitle">ادخل إلى لوحة التحكم لمتابعة رمز QR الخاص بك والرسائل الواردة.</p>
 
       <div class="form-group">
         <label>اسم المستخدم</label>
@@ -249,12 +256,16 @@
     </div>
   </section>
 
-  <!-- 3. صفحة إنشاء حساب جديد -->
+  <!-- 3. صفحة إنشاء حساب جديد وتفعيله بكود واحد محدد -->
   <section id="registerView" class="view-section">
     <div class="card">
-      <h2>إنشاء حساب عميل جديد</h2>
-      <p class="subtitle">سيتم توليد رمز <strong>QR Code خاص بحسابك تلقائياً</strong> فور التسجيل، ويمكنك أيضاً ربط أي استيكرات مطبوعة لديك.</p>
+      <h2>تفعيل الاستيكر وإنشاء حساب</h2>
+      <p class="subtitle">أدخل كود QR المحدد الخاص بك لربطه بحسابك كرمز وحيد دائم.</p>
 
+      <div class="form-group">
+        <label>كود QR المحدد للحساب *</label>
+        <input type="text" id="regSticker" placeholder="أدخل الكود المطبوع على الاستيكر" style="text-transform: uppercase; border-color: var(--primary);">
+      </div>
       <div class="form-group">
         <label>اسم المستخدم (بالإنجليزية أو العربية - بدون تكرار) *</label>
         <input type="text" id="regUser" placeholder="مثال: ahmed_ali">
@@ -268,16 +279,12 @@
         <input type="password" id="regPassConfirm" placeholder="أعد كتابة كلمة المرور">
       </div>
       <div class="form-group">
+        <label>اسم الغرض (مثال: هاتف شخصي، محفظة، مفاتيح)</label>
+        <input type="text" id="regItemName" placeholder="هاتف شخصي">
+      </div>
+      <div class="form-group">
         <label>رقم الهاتف أو واتساب (يُحفظ بسرية)</label>
         <input type="text" id="regContact" placeholder="01xxxxxxxxx">
-      </div>
-      <div class="form-group">
-        <label>كود استيكر مطبوع إضافي (اختياري - سيتم توليد كود لحسابك تلقائياً)</label>
-        <input type="text" id="regSticker" placeholder="اتركه فارغاً إذا لم يكن لديك استيكر مطبوع" style="text-transform: uppercase;">
-      </div>
-      <div class="form-group">
-        <label>اسم الغرض للاستيكر الإضافي (اختياري)</label>
-        <input type="text" id="regItemName" placeholder="مثال: حقيبة الظهر، مفاتيح السيارة">
       </div>
       <div class="form-group">
         <label class="checkbox-row">
@@ -285,7 +292,7 @@
           <span>السماح بإظهار رقم هاتفي لمن يمسح رمز QR (يمكنك تغييره لاحقاً)</span>
         </label>
       </div>
-      <button class="btn btn-primary" id="btnRegister" onclick="handleRegister()">إنشاء الحساب وتوليد QR</button>
+      <button class="btn btn-primary" id="btnRegister" onclick="handleRegister()">تفعيل الكود وإنشاء الحساب</button>
     </div>
   </section>
 
@@ -295,29 +302,20 @@
       <div class="item-header">
         <div>
           <h2>مرحباً، <span id="dashUsername" style="color:var(--primary)"></span></h2>
-          <p class="subtitle" style="margin-bottom:0;">إدارة أكواد QR الخاصة بك والرسائل الواردة</p>
+          <p class="subtitle" style="margin-bottom:0;">إدارة رمز QR المربوط بحسابك والرسائل الواردة</p>
         </div>
         <button class="btn btn-primary btn-sm" onclick="refreshDashboard()">تحديث البيانات ↻</button>
       </div>
 
       <div class="tabs" style="margin-top:15px;">
-        <button class="tab-btn active" onclick="switchDashTab('tabStickers', this)">أكواد QR واستيكراتي (<span id="stickerCount">0</span>)</button>
+        <button class="tab-btn active" onclick="switchDashTab('tabSticker', this)">رمز QR الخاص بي</button>
         <button class="tab-btn" onclick="switchDashTab('tabMessages', this)">الرسائل (<span id="msgCount">0</span>)</button>
         <button class="tab-btn" onclick="switchDashTab('tabSettings', this)">الإعدادات</button>
       </div>
 
-      <!-- تبويب الاستيكرات وأكواد QR -->
-      <div id="tabStickers" class="dash-tab">
-        <div class="item-box" style="border-color: var(--primary);">
-          <h4>+ إضافة كود QR جديد لحسابك</h4>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;">أدخل كود استيكر مطبوع لديك، أو اترك حقل الكود فارغاً لتوليد رمز QR جديد تلقائياً.</p>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
-            <input type="text" id="newStickerId" placeholder="كود الاستيكر (أو اتركه فارغاً)" style="text-transform:uppercase;">
-            <input type="text" id="newStickerName" placeholder="اسم الغرض (حقيبة، هاتف...)">
-          </div>
-          <button class="btn btn-success btn-sm" style="margin-top:10px;" onclick="handleAddSticker()">إضافة / توليد QR</button>
-        </div>
-        <div id="stickersList" style="margin-top:15px;"></div>
+      <!-- تبويب رمز QR الواحد المربوط بالحساب -->
+      <div id="tabSticker" class="dash-tab">
+        <div id="singleStickerBox"></div>
       </div>
 
       <!-- تبويب الرسائل -->
@@ -408,6 +406,12 @@
     document.getElementById("navLogout").style.display = isLoggedIn ? "inline-block" : "none";
   }
 
+  function goActivateSticker() {
+    const code = document.getElementById("scanInput").value.trim().toUpperCase();
+    document.getElementById("regSticker").value = code;
+    switchView("registerView");
+  }
+
   async function postToServer(payload) {
     const res = await fetch(API_URL, {
       method: "POST",
@@ -425,6 +429,7 @@
     btn.disabled = true;
     btn.textContent = "جاري البحث...";
     document.getElementById("stickerResultCard").style.display = "none";
+    document.getElementById("unregisteredCard").style.display = "none";
 
     try {
       const res = await fetch(`${API_URL}?action=lookup&id=${encodeURIComponent(code)}`);
@@ -450,7 +455,7 @@
 
         document.getElementById("stickerResultCard").style.display = "block";
       } else {
-        showAlert(data.message || "الاستيكر غير مسجل في النظام", "error");
+        document.getElementById("unregisteredCard").style.display = "block";
       }
     } catch (err) {
       showAlert("حدث خطأ أثناء الاتصال بالخادم، حاول مرة أخرى", "error");
@@ -493,21 +498,22 @@
   }
 
   async function handleRegister() {
+    const stickerId = document.getElementById("regSticker").value.trim().toUpperCase();
     const username = document.getElementById("regUser").value.trim();
     const password = document.getElementById("regPass").value;
     const confirm = document.getElementById("regPassConfirm").value;
     const contact = document.getElementById("regContact").value.trim();
-    const stickerId = document.getElementById("regSticker").value.trim().toUpperCase();
     const itemName = document.getElementById("regItemName").value.trim();
     const showPhone = document.getElementById("regShowPhone").checked;
 
+    if (!stickerId) return showAlert("يرجى إدخال كود QR المحدد للحساب", "error");
     if (username.length < 3) return showAlert("اسم المستخدم يجب أن يكون 3 أحرف على الأقل", "error");
     if (password.length < 6) return showAlert("كلمة المرور يجب أن تكون 6 أحرف على الأقل", "error");
     if (password !== confirm) return showAlert("كلمتا المرور غير متطابقتين", "error");
 
     const btn = document.getElementById("btnRegister");
     btn.disabled = true;
-    btn.textContent = "جاري إنشاء الحساب وتوليد QR...";
+    btn.textContent = "جاري التفعيل وإنشاء الحساب...";
 
     try {
       const data = await postToServer({
@@ -524,7 +530,7 @@
         currentSession = { username, password };
         localStorage.setItem("qr_tago_session", JSON.stringify(currentSession));
         updateNavForAuth(true);
-        showAlert(`تم إنشاء حسابك وتوليد رمز QR الخاص بك (${data.defaultStickerId}) بنجاح!`, "success");
+        showAlert(data.message, "success");
         switchView("dashboardView");
       } else {
         showAlert(data.message || "فشل إنشاء الحساب", "error");
@@ -533,7 +539,7 @@
       showAlert("خطأ في الاتصال بالخادم", "error");
     } finally {
       btn.disabled = false;
-      btn.textContent = "إنشاء الحساب وتوليد QR";
+      btn.textContent = "تفعيل الكود وإنشاء الحساب";
     }
   }
 
@@ -626,16 +632,19 @@
     document.getElementById("setContact").value = data.user.contact || "";
     document.getElementById("setShowPhone").checked = Boolean(data.user.showPhone);
 
-    // عرض الاستيكرات مع صورة QR Code الجاهزة للتحميل والطباعة
-    const stList = document.getElementById("stickersList");
-    document.getElementById("stickerCount").textContent = data.stickers.length;
-    if (data.stickers.length === 0) {
-      stList.innerHTML = `<p class="subtitle">لا توجد أكواد مرتبطة بحسابك بعد.</p>`;
+    // عرض الرمز الواحد المربوط بالحساب
+    const box = document.getElementById("singleStickerBox");
+    const s = data.sticker;
+    if (!s) {
+      box.innerHTML = `<p class="subtitle">لا يوجد استيكر مربوط بهذا الحساب.</p>`;
     } else {
-      stList.innerHTML = data.stickers.map(s => `
+      box.innerHTML = `
         <div class="item-box">
           <div class="item-header">
-            <strong>${escapeHtml(s.itemName)}</strong>
+            <div>
+              <strong>${escapeHtml(s.itemName)}</strong>
+              <span style="display:block; font-size:0.82rem; color:var(--text-muted);">الرمز الوحيد المعتمد لهذا الحساب</span>
+            </div>
             <select onchange="handleUpdateSticker('${s.stickerId}', this.value)" style="width:auto; padding:4px 10px;">
               <option value="نشط" ${s.status === 'نشط' ? 'selected' : ''}>نشط</option>
               <option value="مفقود" ${s.status === 'مفقود' ? 'selected' : ''}>مفقود</option>
@@ -649,12 +658,12 @@
             </div>
             <div class="qr-actions">
               <p style="font-size:0.82rem; color:var(--text-muted); word-break:break-all;" dir="ltr">${SITE_BASE_URL}?id=${s.stickerId}</p>
-              <button class="btn btn-primary btn-sm" onclick="downloadQrImage('${s.stickerId}')">⬇ تحميل صورة QR للطباعة</button>
+              <button class="btn btn-primary btn-sm" onclick="downloadQrImage('${s.stickerId}')">⬇ تحميل صورة QR</button>
               <button class="btn btn-outline btn-sm" onclick="copyStickerLink('${s.stickerId}')">نسخ الرابط المباشر</button>
             </div>
           </div>
         </div>
-      `).join("");
+      `;
     }
 
     // عرض الرسائل
@@ -679,28 +688,6 @@
           `}
         </div>
       `).join("");
-    }
-  }
-
-  async function handleAddSticker() {
-    const stickerId = document.getElementById("newStickerId").value.trim().toUpperCase();
-    const itemName = document.getElementById("newStickerName").value.trim();
-
-    const data = await postToServer({
-      action: "addSticker",
-      username: currentSession.username,
-      password: currentSession.password,
-      stickerId,
-      itemName
-    });
-
-    if (data.status === "success") {
-      showAlert(data.message, "success");
-      document.getElementById("newStickerId").value = "";
-      document.getElementById("newStickerName").value = "";
-      refreshDashboard();
-    } else {
-      showAlert(data.message, "error");
     }
   }
 
