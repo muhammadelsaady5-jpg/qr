@@ -337,13 +337,12 @@
 </footer>
 
 <script>
-  // رابط خادم Google Apps Script الخاص بك
-  const API_URL = "https://script.google.com/macros/s/AKfycbymDZeHnVGg5__hUNIgdf0M-2lEER2IrotdECnernz7gsYgvXyB6AwAXt3DgZcQ_O03mQ/exec";
+  // رابط خادم Google Apps Script المحدث
+  const API_URL = "https://script.google.com/macros/s/AKfycbwyh1eW7WBWu-BsniAZA0Cw_H-JvxkAhZlI9_oxsqZ47HDwsUvKax_C_Cy0FYZMk2pO0w/exec";
 
-  let currentSession = null; // { username, password }
+  let currentSession = null;
   let activeStickerId = "";
 
-  // عند تحميل الصفحة: فحص وجود ?id= في الرابط أو جلسة محفوظة
   window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const urlStickerId = params.get("id");
@@ -394,7 +393,6 @@
     document.getElementById("navLogout").style.display = isLoggedIn ? "inline-block" : "none";
   }
 
-  // دالة مساعدة لإرسال POST بصيغة text/plain لتجنب مشاكل CORS وقراءة استجابة JSON
   async function postToServer(payload) {
     const res = await fetch(API_URL, {
       method: "POST",
@@ -404,7 +402,6 @@
     return await res.json();
   }
 
-  // 1. البحث عن استيكر
   async function handleLookup() {
     const code = document.getElementById("scanInput").value.trim().toUpperCase();
     if (!code) return showAlert("يرجى إدخال كود الاستيكر أولاً", "error");
@@ -448,7 +445,6 @@
     }
   }
 
-  // 2. إرسال رسالة للمالك
   async function handleSendMessage() {
     const message = document.getElementById("finderMessage").value.trim();
     const senderContact = document.getElementById("finderContact").value.trim();
@@ -481,7 +477,6 @@
     }
   }
 
-  // 3. إنشاء حساب جديد
   async function handleRegister() {
     const username = document.getElementById("regUser").value.trim();
     const password = document.getElementById("regPass").value;
@@ -527,7 +522,6 @@
     }
   }
 
-  // 4. تسجيل الدخول
   async function handleLogin() {
     const username = document.getElementById("loginUser").value.trim();
     const password = document.getElementById("loginPass").value;
@@ -564,7 +558,6 @@
     showAlert("تم تسجيل الخروج بنجاح", "info");
   }
 
-  // 5. جلب وتحديث لوحة التحكم
   async function refreshDashboard() {
     if (!currentSession) return;
     try {
@@ -588,7 +581,6 @@
     document.getElementById("setContact").value = data.user.contact || "";
     document.getElementById("setShowPhone").checked = Boolean(data.user.showPhone);
 
-    // عرض الرسائل
     const msgList = document.getElementById("messagesList");
     document.getElementById("msgCount").textContent = data.messages.length;
     if (data.messages.length === 0) {
@@ -612,7 +604,6 @@
       `).join("");
     }
 
-    // عرض الاستيكرات
     const stList = document.getElementById("stickersList");
     document.getElementById("stickerCount").textContent = data.stickers.length;
     if (data.stickers.length === 0) {
