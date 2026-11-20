@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR-Tago | استوديو طباعة الملصقات</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --primary: #3b82f6;
+      --success: #10b981;
+      --text-main: #f8fafc;
+      --border: #334155;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background-color: var(--bg-dark); color: var(--text-main); }
+
+    /* شريط التحكم العلوي (يختفي تماماً عند الطباعة) */
+    .control-panel {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .panel-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .panel-header h1 { font-size: 1.3rem; color: var(--primary); }
+    .panel-header h1 span { color: white; }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 9px 12px;
+      background: #0b1120;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-print { background: var(--success); color: white; font-size: 1rem; }
+    .btn-print:hover { background: #059669; }
+
+    .info-bar {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* منطقة معاينة الورق A4 */
+    .sheet-wrapper {
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+    }
+    .a4-container {
+      background: #ffffff;
+      width: 210mm;
+      padding: 8mm;
+      border-radius: 4px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+
+    /* شبكة الملصقات */
+    .stickers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4mm;
+    }
+
+    /* تصميم الملصق الواحد */
+    .sticker-card {
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 3mm 2mm;
+      text-align: center;
+      color: #0f172a;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .sticker-brand {
+      font-size: 9pt;
+      font-weight: 900;
+      color: #1e293b;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5mm;
+    }
+    .sticker-brand span { color: #2563eb; }
+
+    .sticker-qr {
+      width: 28mm;
+      height: 28mm;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .sticker-code {
+      font-size: 11pt;
+      font-weight: 900;
+      color: #0f172a;
+      background: #f1f5f9;
+      padding: 0.5mm 4mm;
+      border-radius: 4px;
+      margin-top: 1.5mm;
+      letter-spacing: 1px;
+      border: 1px solid #cbd5e1;
+    }
+
+    .sticker-cta {
+      font-size: 6.8pt;
+      font-weight: 700;
+      color: #475569;
+      margin-top: 1mm;
+      line-height: 1.2;
+    }
+
+    /* إعدادات الطباعة الفورية A4 */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 6mm;
+      }
+      body {
+        background: #ffffff !important;
+      }
+      .control-panel {
+        display: none !important;
+      }
+      .sheet-wrapper {
+        padding: 0 !important;
+      }
+      .a4-container {
+        width: 100% !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+      .sticker-card {
+        border: 1px dashed #64748b !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- لوحة التحكم (تختفي عند الطباعة) -->
+  <div class="control-panel">
+    <div class="panel-container">
+      <div class="panel-header">
+        <h1>QR-<span>Tago</span> | استوديو طباعة الملصقات</h1>
+        <button class="btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+      </div>
+
+      <div class="controls-grid">
+        <div class="input-group">
+          <label>من رقم</label>
+          <input type="number" id="startNum" value="101">
+        </div>
+        <div class="input-group">
+          <label>إلى رقم</label>
+          <input type="number" id="endNum" value="150">
+        </div>
+        <div class="input-group">
+          <label>عدد الأعمدة في الورقة</label>
+          <select id="colsSelect" onchange="updateColumns()">
+            <option value="4" selected>4 أعمدة (حجم قياسي)</option>
+            <option value="5">5 أعمدة (حجم صغير)</option>
+            <option value="3">3 أعمدة (حجم كبير)</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>العبارة أسفل الملصق</label>
+          <input type="text" id="ctaText" value="امسح الكود للتواصل مع المالك">
+        </div>
+        <button class="btn btn-primary" onclick="generateStickers()">تحديث الملصقات</button>
+      </div>
+
+      <div class="info-bar">
+        <span id="countStatus">تم توليد 50 ملصقاً (من 101 إلى 150)</span>
+        <span>💡 نصيحة: عند الحفظ كـ PDF فعّل خيار <strong>Background graphics</strong> في إعدادات الطباعة.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ورقة الطباعة A4 -->
+  <div class="sheet-wrapper">
+    <div class="a4-container">
+      <div id="stickersGrid" class="stickers-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const SITE_BASE_URL = "https://qr-tago.github.io/qr/";
+
+    function getQrImageUrl(code) {
+      const targetUrl = `${SITE_BASE_URL}?id=${encodeURIComponent(code)}`;
+      return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&margin=4&data=${encodeURIComponent(targetUrl)}`;
+    }
+
+    function updateColumns() {
+      const cols = document.getElementById("colsSelect").value;
+      document.getElementById("stickersGrid").style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    }
+
+    function generateStickers() {
+      const start = parseInt(document.getElementById("startNum").value, 10);
+      const end = parseInt(document.getElementById("endNum").value, 10);
+      const cta = document.getElementById("ctaText").value.trim() || "امسح الكود للتواصل مع المالك";
+      const grid = document.getElementById("stickersGrid");
+
+      if (isNaN(start) || isNaN(end) || end < start) {
+        alert("يرجى إدخال نطاق أرقام صحيح (مثال: من 101 إلى 150)");
+        return;
+      }
+
+      if ((end - start) > 300) {
+        alert("الحد الأقصى في المرة الواحدة هو 300 ملصق للحفاظ على سرعة التحميل.");
+        return;
+      }
+
+      let html = "";
+      let total = 0;
+
+      for (let num = start; num <= end; num++) {
+        total++;
+        html += `
+          <div class="sticker-card">
+            <div class="sticker-brand">QR-<span>Tago</span></div>
+            <img class="sticker-qr" src="${getQrImageUrl(num)}" alt="QR ${num}" loading="lazy">
+            <div class="sticker-code">${num}</div>
+            <div class="sticker-cta">${escapeHtml(cta)}</div>
+          </div>
+        `;
+      }
+
+      grid.innerHTML = html;
+      document.getElementById("countStatus").textContent = `تم توليد ${total} ملصقاً (من ${start} إلى ${end})`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // توليد الملصقات من 101 إلى 150 تلقائياً عند فتح الصفحة
+    window.addEventListener("DOMContentLoaded", generateStickers);
+  </script>
+
+</body>
+</html>
