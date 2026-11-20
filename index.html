@@ -115,6 +115,41 @@
       grid-column: 1 / -1;
     }
 
+    /* القسم التعريفي وطلب الشراء */
+    .promo-card {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+    }
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+    .feature-item {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .feature-item strong {
+      display: block;
+      color: var(--primary);
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+    .feature-item span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .order-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
     .reward-banner {
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.1));
       border: 1px solid var(--warning);
@@ -221,7 +256,7 @@
 <main>
   <div id="globalAlert" class="alert"></div>
 
-  <!-- 1. صفحة الشخص الذي يعثر على الغرض -->
+  <!-- 1. صفحة الشخص الذي يعثر على الغرض + القسم التعريفي -->
   <section id="scanView" class="view-section active">
     <div id="manualSearchCard" class="card">
       <h2>هل عثرت على غرض مفقود؟</h2>
@@ -249,13 +284,11 @@
       </div>
       <p class="subtitle" style="margin-top:6px;">رقم الاستيكر: <strong id="resStickerId" style="color:var(--primary)"></strong></p>
 
-      <!-- رسالة المكافأة أو الملاحظة المخصصة من المالك -->
       <div id="rewardBox" class="reward-banner" style="display:none;">
         <strong>🎁 رسالة / مكافأة من صاحب الغرض:</strong>
         <span id="resRewardText"></span>
       </div>
 
-      <!-- أزرار الاتصال والواتساب وإرسال الموقع عبر GPS -->
       <div id="directContactSection" style="display:none; margin: 18px 0;">
         <h3 style="font-size:1.05rem;">التواصل المباشر مع صاحب الغرض</h3>
         <div class="quick-actions-grid">
@@ -269,7 +302,7 @@
 
       <hr style="border-color: var(--border); margin: 20px 0;">
       <h3 style="font-size:1.05rem;">أو أرسل رسالة داخلية محفوظة للمالك</h3>
-      <p class="subtitle">تُحفظ رسالتك داخل حساب المالك مباشرة حتى لو لم يكن هاتفه متاحاً الآن.</p>
+      <p class="subtitle">تُحفظ رسالتك داخل حساب المالك ويصله إشعار فوري بها.</p>
 
       <div class="form-group">
         <label>رسالتك للمالك *</label>
@@ -280,6 +313,58 @@
         <input type="text" id="finderContact" placeholder="رقم هاتف أو واتساب ليتواصل معك المالك">
       </div>
       <button class="btn btn-success" id="btnSendMsg" onclick="handleSendMessage()">إرسال الرسالة للمالك</button>
+    </div>
+
+    <!-- القسم التعريفي وطلب استيكر QR-Tago عبر واتساب -->
+    <div id="promoOrderSection" class="card promo-card">
+      <h2>احمِ مقتنياتك الثمينة مع QR-Tago</h2>
+      <p class="subtitle" style="margin-bottom:10px;">ملصق ذكي مقاوم للماء يُلصق على هاتفك، محفظتك، مفاتيحك، أو حقيبتك؛ يتيح لمن يعثر عليها التواصل معك فوراً دون كشف بياناتك الخاصة إلا بإذنك.</p>
+
+      <div class="features-list">
+        <div class="feature-item">
+          <strong>🔒 خصوصية كاملة</strong>
+          <span>تحكّم في إظهار أو إخفاء رقم هاتفك في أي وقت من لوحة التحكم.</span>
+        </div>
+        <div class="feature-item">
+          <strong>📍 مشاركة الموقع (GPS)</strong>
+          <span>زر مباشر يمكّن من يجد غرضك من إرسال موقعه إليك على الخريطة بضغطة واحدة.</span>
+        </div>
+        <div class="feature-item">
+          <strong>🎁 رسالة مكافأة مخصصة</strong>
+          <span>أضف رسالة تحفيزية أو مكافأة تظهر لمن يمسح الرمز لتشجيعه على إعادته.</span>
+        </div>
+        <div class="feature-item">
+          <strong>🔔 تنبيهات فورية</strong>
+          <span>استقبل الرسائل على لوحة تحكمك وبريدك الإلكتروني حتى بدون وجود شريحة اتصال.</span>
+        </div>
+      </div>
+
+      <hr style="border-color: var(--border); margin: 18px 0;">
+      <h3>اطلب استيكر QR-Tago الآن</h3>
+      <p class="subtitle" style="margin-bottom:12px;">املأ البيانات التالية وسيتم تحويلك لواتساب المبيعات لتأكيد طلبك فوراً:</p>
+
+      <div class="order-grid">
+        <div class="form-group" style="margin-bottom:8px;">
+          <label>الاسم بالكامل</label>
+          <input type="text" id="orderName" placeholder="اكتب اسمك">
+        </div>
+        <div class="form-group" style="margin-bottom:8px;">
+          <label>الكمية المطلوبة</label>
+          <select id="orderQty">
+            <option value="1 استيكر">1 استيكر</option>
+            <option value="باقة 3 استيكرات (الأكثر طلباً)" selected>باقة 3 استيكرات</option>
+            <option value="باقة 5 استيكرات للعائلة">باقة 5 استيكرات للعائلة</option>
+            <option value="طلب جملة للمحلات">طلب جملة للمحلات</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>المحافظة / العنوان</label>
+        <input type="text" id="orderCity" placeholder="مثال: بني سويف - الفشن">
+      </div>
+      <button type="button" class="btn btn-whatsapp" onclick="orderViaWhatsapp()">
+        💬 اطلب استيكر QR-Tago الآن عبر واتساب
+      </button>
     </div>
   </section>
 
@@ -332,6 +417,10 @@
         <input type="tel" id="regContact" placeholder="01xxxxxxxxx">
       </div>
       <div class="form-group">
+        <label>البريد الإلكتروني لاستقبال إشعارات الرسائل الفورية (اختياري)</label>
+        <input type="email" id="regEmail" placeholder="name@example.com">
+      </div>
+      <div class="form-group">
         <label>رسالة المكافأة أو ملاحظة لمن يعثر على الغرض (اختياري)</label>
         <textarea id="regRewardMsg" placeholder="مثال: توجد مكافأة مالية مجزية لمن يعيده، برجاء التواصل فوراً..."></textarea>
       </div>
@@ -362,21 +451,22 @@
         <button class="tab-btn" onclick="switchDashTab('tabSettings', this)">الإعدادات والمكافأة</button>
       </div>
 
-      <!-- تبويب رمز QR الواحد المربوط بالحساب -->
       <div id="tabSticker" class="dash-tab">
         <div id="singleStickerBox"></div>
       </div>
 
-      <!-- تبويب الرسائل -->
       <div id="tabMessages" class="dash-tab" style="display:none;">
         <div id="messagesList"></div>
       </div>
 
-      <!-- تبويب الإعدادات ورسالة المكافأة -->
       <div id="tabSettings" class="dash-tab" style="display:none;">
         <div class="form-group">
           <label>رقم الهاتف / الواتساب</label>
           <input type="tel" id="setContact" placeholder="01xxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني للإشعارات الفورية</label>
+          <input type="email" id="setEmail" placeholder="name@example.com">
         </div>
         <div class="form-group">
           <label>رسالة المكافأة أو الملاحظة التي تظهر لمن يمسح الرمز</label>
@@ -405,6 +495,9 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbwyh1eW7WBWu-BsniAZA0Cw_H-JvxkAhZlI9_oxsqZ47HDwsUvKax_C_Cy0FYZMk2pO0w/exec";
   const SITE_BASE_URL = "https://qr-tago.github.io/qr/";
+  
+  // ضع رقم واتساب المبيعات الخاص بك هنا بصيغة دولية بدون + (مثال لمصر: 201012345678)
+  const SALES_WHATSAPP = "201000000000";
 
   let currentSession = null;
   let activeStickerId = "";
@@ -416,6 +509,7 @@
     const urlStickerId = params.get("id");
     if (urlStickerId) {
       document.getElementById("manualSearchCard").style.display = "none";
+      document.getElementById("promoOrderSection").style.display = "none";
       document.getElementById("scanInput").value = urlStickerId.trim().toUpperCase();
       handleLookup();
     }
@@ -433,7 +527,21 @@
 
   function resetToHome() {
     document.getElementById("manualSearchCard").style.display = "block";
+    document.getElementById("promoOrderSection").style.display = "block";
     switchView("scanView");
+  }
+
+  function orderViaWhatsapp() {
+    const name = document.getElementById("orderName").value.trim() || "عميل جديد";
+    const qty = document.getElementById("orderQty").value;
+    const city = document.getElementById("orderCity").value.trim() || "غير محدد";
+
+    const msg = `مرحباً QR-Tago، أرغب في طلب استيكرات:\n` +
+      `- الاسم: ${name}\n` +
+      `- الكمية: ${qty}\n` +
+      `- المحافظة/العنوان: ${city}`;
+
+    window.open(`https://wa.me/${SALES_WHATSAPP}?text=${encodeURIComponent(msg)}`, "_blank");
   }
 
   function showAlert(msg, type = "info") {
@@ -632,6 +740,7 @@
     const password = document.getElementById("regPass").value;
     const confirm = document.getElementById("regPassConfirm").value;
     const contact = document.getElementById("regContact").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
     const itemName = document.getElementById("regItemName").value.trim();
     const rewardMessage = document.getElementById("regRewardMsg").value.trim();
     const showPhone = document.getElementById("regShowPhone").checked;
@@ -651,6 +760,7 @@
         username,
         password,
         contact,
+        email,
         stickerId,
         itemName,
         rewardMessage,
@@ -761,6 +871,7 @@
   function renderDashboard(data) {
     document.getElementById("dashUsername").textContent = data.user.username;
     document.getElementById("setContact").value = data.user.contact || "";
+    document.getElementById("setEmail").value = data.user.email || "";
     document.getElementById("setRewardMsg").value = data.user.rewardMessage || "";
     document.getElementById("setShowPhone").checked = Boolean(data.user.showPhone);
 
@@ -849,6 +960,7 @@
 
   async function handleUpdateSettings() {
     const contact = document.getElementById("setContact").value.trim();
+    const email = document.getElementById("setEmail").value.trim();
     const rewardMessage = document.getElementById("setRewardMsg").value.trim();
     const showPhone = document.getElementById("setShowPhone").checked;
     const newPassword = document.getElementById("setNewPass").value;
@@ -862,6 +974,7 @@
       username: currentSession.username,
       password: currentSession.password,
       contact,
+      email,
       rewardMessage,
       showPhone,
       newPassword
