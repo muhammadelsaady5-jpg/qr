@@ -13,6 +13,7 @@
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --success: #10b981;
+      --whatsapp: #25D366;
       --warning: #f59e0b;
       --danger: #ef4444;
       --text-main: #f8fafc;
@@ -90,14 +91,46 @@
       justify-content: center;
       align-items: center;
       gap: 8px;
+      text-decoration: none;
     }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-hover); }
     .btn-success { background: var(--success); color: white; }
+    .btn-whatsapp { background: var(--whatsapp); color: #052e16; }
+    .btn-whatsapp:hover { filter: brightness(1.05); }
+    .btn-gps { background: #0ea5e9; color: white; }
+    .btn-gps:hover { background: #0284c7; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
     .btn-sm { width: auto; padding: 6px 14px; font-size: 0.85rem; }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* شبكة أزرار التواصل السريع */
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .quick-actions-grid .btn-full {
+      grid-column: 1 / -1;
+    }
+
+    /* صندوق رسالة المكافأة */
+    .reward-banner {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.1));
+      border: 1px solid var(--warning);
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px 0;
+      color: #fde68a;
+    }
+    .reward-banner strong {
+      display: block;
+      color: #fbbf24;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
 
     .alert {
       padding: 12px 15px;
@@ -177,9 +210,9 @@
 <body>
 
 <header>
-  <div class="logo" onclick="switchView('scanView')">QR-<span>Tago</span></div>
+  <div class="logo" onclick="resetToHome()">QR-<span>Tago</span></div>
   <nav id="mainNav">
-    <button class="nav-btn active" onclick="switchView('scanView')">فحص استيكر</button>
+    <button class="nav-btn active" onclick="resetToHome()">فحص استيكر</button>
     <button class="nav-btn" id="navLogin" onclick="switchView('loginView')">دخول العملاء</button>
     <button class="nav-btn" id="navRegister" onclick="switchView('registerView')">حساب جديد</button>
     <button class="nav-btn" id="navDashboard" style="display:none;" onclick="switchView('dashboardView')">لوحة التحكم</button>
@@ -190,11 +223,11 @@
 <main>
   <div id="globalAlert" class="alert"></div>
 
-  <!-- 1. صفحة فحص الاستيكر -->
+  <!-- 1. صفحة الشخص الذي يعثر على الغرض -->
   <section id="scanView" class="view-section active">
-    <div class="card">
+    <div id="manualSearchCard" class="card">
       <h2>هل عثرت على غرض مفقود؟</h2>
-      <p class="subtitle">أدخل كود الاستيكر المطبوع أسفل رمز QR للتواصل الآمن مع المالك دون كشف بياناته الشخصية.</p>
+      <p class="subtitle">أدخل كود الاستيكر المطبوع أسفل رمز QR للتواصل الآمن مع المالك.</p>
       
       <div class="form-group">
         <label>كود الاستيكر</label>
@@ -210,21 +243,35 @@
       <button class="btn btn-primary" onclick="goActivateSticker()">تفعيل الاستيكر وإنشاء حساب</button>
     </div>
 
-    <!-- نتيجة البحث ونموذج إرسال رسالة للمالك -->
+    <!-- صفحة بيانات صاحب الغرض والتواصل الفوري -->
     <div id="stickerResultCard" class="card" style="display:none;">
       <div class="item-header">
-        <h3 id="resItemName">غرض مسجل في QR-Tago</h3>
+        <h2 id="resItemName" style="margin-bottom:0;">غرض مسجل في QR-Tago</h2>
         <span id="resStatusBadge" class="badge badge-active">نشط</span>
       </div>
-      <p class="subtitle">كود الاستيكر: <strong id="resStickerId" style="color:var(--primary)"></strong></p>
+      <p class="subtitle" style="margin-top:6px;">كود الاستيكر: <strong id="resStickerId" style="color:var(--primary)"></strong></p>
 
-      <div id="publicContactBox" class="alert alert-info" style="display:none;">
-        وسيلة تواصل مباشرة أتاحها المالك: <strong id="resPublicContact"></strong>
+      <!-- رسالة المكافأة أو الملاحظة المخصصة من المالك -->
+      <div id="rewardBox" class="reward-banner" style="display:none;">
+        <strong>🎁 رسالة / مكافأة من صاحب الغرض:</strong>
+        <span id="resRewardText"></span>
       </div>
 
-      <hr style="border-color: var(--border); margin: 18px 0;">
-      <h3>إرسال رسالة فورية لصاحب الغرض</h3>
-      <p class="subtitle">تُحفظ رسالتك في حساب المالك ليتمكن من قراءتها والرد عليها حتى لو لم تكن معه شريحة اتصال.</p>
+      <!-- أزرار الاتصال والواتساب وإرسال الموقع عبر GPS (تظهر إذا أتاح المالك رقمه) -->
+      <div id="directContactSection" style="display:none; margin: 18px 0;">
+        <h3 style="font-size:1.05rem;">التواصل المباشر مع صاحب الغرض</h3>
+        <div class="quick-actions-grid">
+          <a id="btnDirectCall" href="#" class="btn btn-primary">📞 اتصال هاتفي</a>
+          <a id="btnDirectWhatsapp" href="#" target="_blank" class="btn btn-whatsapp">💬 مراسلة واتساب</a>
+          <button id="btnSendGpsWhatsapp" type="button" class="btn btn-gps btn-full" onclick="sendLocationViaWhatsapp()">
+            📍 إرسال موقعي الحالي عبر واتساب لصاحب الغرض
+          </button>
+        </div>
+      </div>
+
+      <hr style="border-color: var(--border); margin: 20px 0;">
+      <h3 style="font-size:1.05rem;">أو أرسل رسالة داخلية محفوظة للمالك</h3>
+      <p class="subtitle">تُحفظ رسالتك داخل حساب المالك مباشرة حتى لو لم يكن هاتفه متاحاً الآن.</p>
 
       <div class="form-group">
         <label>رسالتك للمالك *</label>
@@ -283,13 +330,17 @@
         <input type="text" id="regItemName" placeholder="هاتف شخصي">
       </div>
       <div class="form-group">
-        <label>رقم الهاتف أو واتساب (يُحفظ بسرية)</label>
-        <input type="text" id="regContact" placeholder="01xxxxxxxxx">
+        <label>رقم الهاتف / الواتساب (لتفعيل أزرار الاتصال والواتساب والموقع)</label>
+        <input type="tel" id="regContact" placeholder="01xxxxxxxxx">
+      </div>
+      <div class="form-group">
+        <label>رسالة المكافأة أو ملاحظة لمن يعثر على الغرض (اختياري)</label>
+        <textarea id="regRewardMsg" placeholder="مثال: توجد مكافأة مالية مجزية لمن يعيده، برجاء التواصل فوراً..."></textarea>
       </div>
       <div class="form-group">
         <label class="checkbox-row">
-          <input type="checkbox" id="regShowPhone">
-          <span>السماح بإظهار رقم هاتفي لمن يمسح رمز QR (يمكنك تغييره لاحقاً)</span>
+          <input type="checkbox" id="regShowPhone" checked>
+          <span>تفعيل أزرار الاتصال المباشر والواتساب وإرسال الموقع لمن يمسح الكود</span>
         </label>
       </div>
       <button class="btn btn-primary" id="btnRegister" onclick="handleRegister()">تفعيل الكود وإنشاء الحساب</button>
@@ -310,7 +361,7 @@
       <div class="tabs" style="margin-top:15px;">
         <button class="tab-btn active" onclick="switchDashTab('tabSticker', this)">رمز QR الخاص بي</button>
         <button class="tab-btn" onclick="switchDashTab('tabMessages', this)">الرسائل (<span id="msgCount">0</span>)</button>
-        <button class="tab-btn" onclick="switchDashTab('tabSettings', this)">الإعدادات</button>
+        <button class="tab-btn" onclick="switchDashTab('tabSettings', this)">الإعدادات والمكافأة</button>
       </div>
 
       <!-- تبويب رمز QR الواحد المربوط بالحساب -->
@@ -323,16 +374,20 @@
         <div id="messagesList"></div>
       </div>
 
-      <!-- تبويب الإعدادات -->
+      <!-- تبويب الإعدادات ورسالة المكافأة -->
       <div id="tabSettings" class="dash-tab" style="display:none;">
         <div class="form-group">
-          <label>بيانات الاتصال الخاصة بك</label>
-          <input type="text" id="setContact">
+          <label>رقم الهاتف / الواتساب</label>
+          <input type="tel" id="setContact" placeholder="01xxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label>رسالة المكافأة أو الملاحظة التي تظهر لمن يمسح الرمز</label>
+          <textarea id="setRewardMsg" placeholder="اكتب هنا رسالة المكافأة أو أي تعليمات لمن يعثر على الغرض..."></textarea>
         </div>
         <div class="form-group">
           <label class="checkbox-row">
             <input type="checkbox" id="setShowPhone">
-            <span>إظهار رقم هاتفي للعامة عند مسح رمز QR</span>
+            <span>إظهار أزرار الاتصال والواتساب وإرسال الموقع لمن يمسح رمز QR</span>
           </label>
         </div>
         <div class="form-group">
@@ -355,11 +410,14 @@
 
   let currentSession = null;
   let activeStickerId = "";
+  let activeOwnerPhone = "";
+  let activeItemName = "";
 
   window.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     const urlStickerId = params.get("id");
     if (urlStickerId) {
+      document.getElementById("manualSearchCard").style.display = "none";
       document.getElementById("scanInput").value = urlStickerId.toUpperCase();
       handleLookup();
     }
@@ -374,6 +432,11 @@
       }
     }
   });
+
+  function resetToHome() {
+    document.getElementById("manualSearchCard").style.display = "block";
+    switchView("scanView");
+  }
 
   function showAlert(msg, type = "info") {
     const box = document.getElementById("globalAlert");
@@ -412,6 +475,17 @@
     switchView("registerView");
   }
 
+  // تنسيق رقم الهاتف للواتساب الدولي (يدعم الأرقام المصرية 01xxxxxxxxx تلقائياً)
+  function formatWhatsAppNumber(rawPhone) {
+    let digits = String(rawPhone || "").replace(/\D/g, "");
+    if (digits.startsWith("00")) {
+      digits = digits.substring(2);
+    } else if (digits.startsWith("01") && digits.length === 11) {
+      digits = "2" + digits;
+    }
+    return digits;
+  }
+
   async function postToServer(payload) {
     const res = await fetch(API_URL, {
       method: "POST",
@@ -437,24 +511,42 @@
 
       if (data.status === "found") {
         activeStickerId = data.stickerId;
+        activeItemName = data.itemName || "غرض مسجل في QR-Tago";
+        activeOwnerPhone = data.publicContact || "";
+
         document.getElementById("resStickerId").textContent = data.stickerId;
-        document.getElementById("resItemName").textContent = data.itemName || "غرض مسجل في QR-Tago";
+        document.getElementById("resItemName").textContent = activeItemName;
         
         const badge = document.getElementById("resStatusBadge");
         const statusText = data.stickerStatus || "نشط";
         badge.textContent = statusText;
         badge.className = statusText === "مفقود" ? "badge badge-lost" : "badge badge-active";
 
-        const contactBox = document.getElementById("publicContactBox");
-        if (data.publicContact) {
-          document.getElementById("resPublicContact").textContent = data.publicContact;
-          contactBox.style.display = "block";
+        // عرض رسالة المكافأة إن وُجدت
+        const rewardBox = document.getElementById("rewardBox");
+        if (data.rewardMessage) {
+          document.getElementById("resRewardText").textContent = data.rewardMessage;
+          rewardBox.style.display = "block";
         } else {
-          contactBox.style.display = "none";
+          rewardBox.style.display = "none";
+        }
+
+        // إعداد أزرار الاتصال والواتساب والموقع
+        const directSection = document.getElementById("directContactSection");
+        if (activeOwnerPhone) {
+          const waNumber = formatWhatsAppNumber(activeOwnerPhone);
+          const defaultWaText = encodeURIComponent(`مرحباً، لقد عثرت على (${activeItemName}) الخاص بك والمرتبط بكود QR-Tago: ${activeStickerId}`);
+          
+          document.getElementById("btnDirectCall").href = `tel:${activeOwnerPhone}`;
+          document.getElementById("btnDirectWhatsapp").href = `https://wa.me/${waNumber}?text=${defaultWaText}`;
+          directSection.style.display = "block";
+        } else {
+          directSection.style.display = "none";
         }
 
         document.getElementById("stickerResultCard").style.display = "block";
       } else {
+        document.getElementById("manualSearchCard").style.display = "block";
         document.getElementById("unregisteredCard").style.display = "block";
       }
     } catch (err) {
@@ -463,6 +555,49 @@
       btn.disabled = false;
       btn.textContent = "بحث عن الاستيكر";
     }
+  }
+
+  // التقاط موقع GPS وإرساله عبر واتساب لصاحب الغرض مباشرة
+  function sendLocationViaWhatsapp() {
+    if (!activeOwnerPhone) {
+      return showAlert("رقم واتساب صاحب الغرض غير متاح، يمكنك إرسال رسالة داخلية بالأسفل.", "error");
+    }
+
+    if (!navigator.geolocation) {
+      return showAlert("متصفحك لا يدعم تحديد الموقع الجغرافي (GPS).", "error");
+    }
+
+    const btn = document.getElementById("btnSendGpsWhatsapp");
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = "⏳ جاري تحديد موقعك بدقة...";
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const mapsLink = `https://www.google.com/maps?q=${lat},${lng}`;
+        const waNumber = formatWhatsAppNumber(activeOwnerPhone);
+
+        const msg = `مرحباً، لقد عثرت على (${activeItemName}) الخاص بك (كود: ${activeStickerId}).\nهذا هو موقعي الحالي لاستلام الغرض:\n${mapsLink}`;
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
+
+        window.open(waUrl, "_blank");
+      },
+      (error) => {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        let errMsg = "تعذر تحديد الموقع، يرجى تفعيل خدمة الموقع (GPS) في هاتفك والمحاولة مرة أخرى.";
+        if (error.code === 1) {
+          errMsg = "يرجى السماح للمتصفح بالوصول إلى الموقع (Location) لإرسال مكانك.";
+        }
+        showAlert(errMsg, "error");
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
   }
 
   async function handleSendMessage() {
@@ -504,6 +639,7 @@
     const confirm = document.getElementById("regPassConfirm").value;
     const contact = document.getElementById("regContact").value.trim();
     const itemName = document.getElementById("regItemName").value.trim();
+    const rewardMessage = document.getElementById("regRewardMsg").value.trim();
     const showPhone = document.getElementById("regShowPhone").checked;
 
     if (!stickerId) return showAlert("يرجى إدخال كود QR المحدد للحساب", "error");
@@ -523,6 +659,7 @@
         contact,
         stickerId,
         itemName,
+        rewardMessage,
         showPhone
       });
 
@@ -575,7 +712,7 @@
     currentSession = null;
     localStorage.removeItem("qr_tago_session");
     updateNavForAuth(false);
-    switchView("scanView");
+    resetToHome();
     showAlert("تم تسجيل الخروج بنجاح", "info");
   }
 
@@ -630,9 +767,9 @@
   function renderDashboard(data) {
     document.getElementById("dashUsername").textContent = data.user.username;
     document.getElementById("setContact").value = data.user.contact || "";
+    document.getElementById("setRewardMsg").value = data.user.rewardMessage || "";
     document.getElementById("setShowPhone").checked = Boolean(data.user.showPhone);
 
-    // عرض الرمز الواحد المربوط بالحساب
     const box = document.getElementById("singleStickerBox");
     const s = data.sticker;
     if (!s) {
@@ -666,7 +803,6 @@
       `;
     }
 
-    // عرض الرسائل
     const msgList = document.getElementById("messagesList");
     document.getElementById("msgCount").textContent = data.messages.length;
     if (data.messages.length === 0) {
@@ -719,6 +855,7 @@
 
   async function handleUpdateSettings() {
     const contact = document.getElementById("setContact").value.trim();
+    const rewardMessage = document.getElementById("setRewardMsg").value.trim();
     const showPhone = document.getElementById("setShowPhone").checked;
     const newPassword = document.getElementById("setNewPass").value;
 
@@ -731,6 +868,7 @@
       username: currentSession.username,
       password: currentSession.password,
       contact,
+      rewardMessage,
       showPhone,
       newPassword
     });
