@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR-Tago | طباعة كروت الإرشاد والتفعيل</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+    body { background: #0f172a; color: #f8fafc; }
+
+    .top-bar {
+      background: #1e293b;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .top-bar h1 { font-size: 1.2rem; color: #3b82f6; }
+    .top-bar h1 span { color: white; }
+    .btn-print {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .sheet-wrapper {
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+    }
+    .a4-sheet {
+      background: #ffffff;
+      width: 210mm;
+      height: 297mm;
+      padding: 8mm;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 4mm;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    }
+
+    .guide-card {
+      border: 1.5px dashed #94a3b8;
+      border-radius: 10px;
+      padding: 4mm 5mm;
+      color: #0f172a;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding-bottom: 2mm;
+    }
+    .brand { font-size: 12pt; font-weight: 900; color: #2563eb; }
+    .brand span { color: #0f172a; }
+    .tag-pill {
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 7.5pt;
+      font-weight: 800;
+      padding: 1mm 3mm;
+      border-radius: 20px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .steps {
+      list-style: none;
+      margin: 2mm 0;
+      font-size: 8.2pt;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.55;
+    }
+    .steps li strong { color: #2563eb; }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      padding: 1.5mm 3mm;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      font-size: 7.5pt;
+      font-weight: 800;
+      color: #334155;
+    }
+    .card-footer .url { direction: ltr; color: #2563eb; }
+
+    @media print {
+      @page { size: A4 portrait; margin: 0; }
+      body { background: #ffffff !important; }
+      .top-bar { display: none !important; }
+      .sheet-wrapper { padding: 0 !important; }
+      .a4-sheet {
+        box-shadow: none !important;
+        width: 210mm;
+        height: 297mm;
+      }
+      .guide-card {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <h1>QR-<span>Tago</span> | كروت الإرشاد المصاحبة للاستيكر (10 كروت / ورقة A4)</h1>
+    <button class="btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+  </div>
+
+  <div class="sheet-wrapper">
+    <div class="a4-sheet" id="cardsGrid"></div>
+  </div>
+
+  <script>
+    const grid = document.getElementById("cardsGrid");
+    let html = "";
+    for (let i = 0; i < 10; i++) {
+      html += `
+        <div class="guide-card">
+          <div class="card-header">
+            <div class="brand">QR-<span>Tago</span></div>
+            <div class="tag-pill">دليل التفعيل السريع</div>
+          </div>
+          <ul class="steps">
+            <li><strong>1. الصق الاستيكر</strong> على هاتفك، محفظتك، أو مفاتيحك.</li>
+            <li><strong>2. امسح رمز QR</strong> بكاميرا الهاتف واضغط <strong>«تفعيل الاستيكر»</strong>.</li>
+            <li><strong>3. أدخل الرقم المطبوع</strong> أسفل الكود وأنشئ حسابك ورسالة المكافأة.</li>
+          </ul>
+          <div class="card-footer">
+            <span>واتساب الدعم: 01110008872</span>
+            <span class="url">qr-tago.github.io/qr</span>
+          </div>
+        </div>
+      `;
+    }
+    grid.innerHTML = html;
+  </script>
+
+</body>
+</html>
